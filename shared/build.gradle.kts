@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kmpNativeCoroutines)
 }
 
 kotlin {
@@ -23,6 +24,10 @@ kotlin {
         }
     }
     
+    sourceSets.all {
+        languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(libs.androidx.lifecycle.viewmodel)

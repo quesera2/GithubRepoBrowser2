@@ -2,6 +2,7 @@ package que.sera.sera.githubbrowser2
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -17,6 +18,7 @@ class RepoViewModel : ViewModel() {
     private val api = GitHubApi()
 
     private val _uiState = MutableStateFlow<RepoUiState>(RepoUiState.Idle)
+    @NativeCoroutinesState
     val uiState: StateFlow<RepoUiState> = _uiState
 
     fun fetchRepos(username: String) {
