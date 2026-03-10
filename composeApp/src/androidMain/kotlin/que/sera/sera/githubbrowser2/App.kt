@@ -31,9 +31,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -42,10 +46,27 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun App(vm: RepoViewModel = viewModel<RepoViewModel>()) {
     val uiState by vm.uiState.collectAsState()
     var query by remember { mutableStateOf("") }
-    var searchActive by remember { mutableStateOf(false) }
 
+    AppContent(
+        uiState = uiState,
+        query = query,
+        onQueryChange = { query = it },
+        onSearch = { vm.fetchRepos(query) },
+        onRetry = { vm.fetchRepos(query) },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppContent(
+    uiState: RepoUiState,
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onSearch: () -> Unit,
+    onRetry: () -> Unit,
+) {
     val title = if (uiState is RepoUiState.Success) {
-        "リポジトリ一覧（${(uiState as RepoUiState.Success).repos.size}件）"
+        "リポジトリ一覧（${uiState.repos.size}件）"
     } else {
         "リポジトリ一覧"
     }
@@ -59,18 +80,16 @@ fun App(vm: RepoViewModel = viewModel<RepoViewModel>()) {
                         inputField = {
                             SearchBarDefaults.InputField(
                                 query = query,
-                                onQueryChange = { query = it },
-                                onSearch = {
-                                    vm.fetchRepos(query)
-                                    searchActive = false
-                                },
-                                expanded = searchActive,
-                                onExpandedChange = { searchActive = it },
+                                onQueryChange = onQueryChange,
+                                onSearch = { onSearch() },
+                                expanded = false,
+                                onExpandedChange = {},
                                 placeholder = { Text("ユーザー名を入力してください") },
                             )
                         },
-                        expanded = searchActive,
-                        onExpandedChange = { searchActive = it },
+                        expanded = false,
+                        onExpandedChange = {},
+                        windowInsets = WindowInsets(0),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 4.dp),
@@ -78,39 +97,42 @@ fun App(vm: RepoViewModel = viewModel<RepoViewModel>()) {
                 }
             }
         ) { innerPadding ->
-            Box(modifier = Modifier.padding(innerPadding)) {
-                when (val state = uiState) {
-                    is RepoUiState.Idle -> Unit
-                    is RepoUiState.Loading -> Box(
-                        Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                    is RepoUiState.Error -> AlertDialog(
-                        onDismissRequest = {},
-                        title = { Text("エラー") },
-                        text = { Text(state.message) },
-                        confirmButton = {
-                            TextButton(onClick = { vm.fetchRepos(query) }) { Text("再試行") }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = { /* dismiss */ }) { Text("閉じる") }
-                        },
-                    )
-                    is RepoUiState.Success -> if (state.repos.isEmpty()) {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(
-                                "リポジトリが見つかりません",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)) {
+                    when (val state = uiState) {
+                        is RepoUiState.Idle -> Unit
+                        is RepoUiState.Loading -> Box(
+                            Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator()
                         }
-                    } else {
-                        LazyColumn {
-                            items(state.repos) { repo ->
-                                RepoRow(repo)
-                                HorizontalDivider()
+                        is RepoUiState.Error -> AlertDialog(
+                            onDismissRequest = {},
+                            title = { Text("エラー") },
+                            text = { Text(state.message) },
+                            confirmButton = {
+                                TextButton(onClick = onRetry) { Text("再試行") }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = {}) { Text("閉じる") }
+                            },
+                        )
+                        is RepoUiState.Success -> if (state.repos.isEmpty()) {
+                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Text(
+                                    "リポジトリが見つかりません",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        } else {
+                            LazyColumn {
+                                items(state.repos) { repo ->
+                                    RepoRow(repo)
+                                    HorizontalDivider()
+                                }
                             }
                         }
                     }
@@ -118,6 +140,34 @@ fun App(vm: RepoViewModel = viewModel<RepoViewModel>()) {
             }
         }
     }
+
+// ---- Previews ----
+
+private val sampleRepos = listOf(
+    GitHubRepo(1, "kotlin", "JetBrains/kotlin", "The Kotlin Programming Language", 50000, 6000, "Kotlin", ""),
+    GitHubRepo(2, "compose", "JetBrains/compose", "Compose Multiplatform", 12000, 800, "Kotlin", ""),
+    GitHubRepo(3, "ktor", "ktorio/ktor", null, 13000, 1100, null, ""),
+)
+
+private class RepoUiStateProvider : PreviewParameterProvider<RepoUiState> {
+    private val named = listOf(
+        "Loading" to RepoUiState.Loading,
+        "Success" to RepoUiState.Success(sampleRepos),
+        "Empty" to RepoUiState.Success(emptyList()),
+        "Error" to RepoUiState.Error("Not Found"),
+    )
+    override val values = named.map { it.second }.asSequence()
+    override fun getDisplayName(index: Int) = named[index].first
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewApp(@PreviewParameter(RepoUiStateProvider::class) uiState: RepoUiState) {
+    AppContent(
+        uiState = uiState,
+        query = "JetBrains",
+        onQueryChange = {}, onSearch = {}, onRetry = {},
+    )
 }
 
 @Composable
@@ -152,7 +202,11 @@ private fun RepoRow(repo: GitHubRepo) {
                         modifier = Modifier.padding(0.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    Text(lang, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        lang,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
             Row(
@@ -164,7 +218,11 @@ private fun RepoRow(repo: GitHubRepo) {
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Text("${repo.stars}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    "${repo.stars}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             Spacer(Modifier.weight(1f))
         }
