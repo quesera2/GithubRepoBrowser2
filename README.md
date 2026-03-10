@@ -7,7 +7,7 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 
 | Android | iOS |
 |:---:|:---:|
-| ![Android](docs/screenshots/android.png) | ![iOS](docs/screenshots/ios.png) |
+| <img src="docs/screenshots/android.png" width="300"> | <img src="docs/screenshots/ios.png" width="300"> |
 
 ## 技術スタック
 
