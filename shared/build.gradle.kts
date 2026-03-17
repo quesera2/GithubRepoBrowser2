@@ -21,6 +21,9 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
+            export(projects.feature.repoview)
+            export(projects.domain.model)
+            export(projects.domain.contract)
         }
     }
 
@@ -36,6 +39,11 @@ kotlin {
             implementation(projects.domain.contract)
             implementation(projects.domain.model)
             implementation(libs.metro.runtime)
+        }
+        iosMain.dependencies {
+            api(projects.feature.repoview)
+            api(projects.domain.model)
+            api(projects.domain.contract)
         }
     }
 }

@@ -14,7 +14,7 @@ final class ContentViewModel {
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        vm = AppGraph().repoViewModel
+        vm = AppGraphCompanion.shared.invoke().repoViewModel
         createPublisher(for: vm.uiStateFlow)
             .receive(on: DispatchQueue.main)
             .sink(
