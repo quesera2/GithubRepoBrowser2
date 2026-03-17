@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
-    alias(libs.plugins.metro)
     alias(libs.plugins.kmpNativeCoroutines)
 }
 
@@ -20,9 +19,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(projects.domain.model)
-            api(projects.domain.contract)
-            implementation(libs.metro.runtime)
+            implementation(projects.domain.model)
+            implementation(projects.domain.contract)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.kotlinx.coroutines.core)
         }

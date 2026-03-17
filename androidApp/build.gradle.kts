@@ -25,6 +25,8 @@ android {
 
 dependencies {
     implementation(projects.shared)
+    implementation(projects.feature.repoview)
+    implementation(projects.domain.model)
     implementation(libs.metro.runtime)
     implementation(libs.androidx.activity.compose)
     implementation(libs.compose.runtime)

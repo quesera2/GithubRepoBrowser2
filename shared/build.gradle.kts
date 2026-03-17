@@ -21,7 +21,6 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
-            export(projects.feature.repoview)
         }
     }
 
@@ -31,8 +30,11 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(projects.feature.repoview)
+            implementation(projects.feature.repoview)
             implementation(projects.data.repository)
+            implementation(projects.data.api)
+            implementation(projects.domain.contract)
+            implementation(projects.domain.model)
             implementation(libs.metro.runtime)
         }
     }

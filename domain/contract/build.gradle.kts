@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
-    alias(libs.plugins.metro)
 }
 
 kotlin {
@@ -21,8 +20,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(projects.domain.model)
-            implementation(libs.metro.runtime)
+            implementation(projects.domain.model)
         }
     }
 }
