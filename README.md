@@ -43,29 +43,35 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 
 ```mermaid
 graph TD
-    androidApp["📱 :androidApp"]
-    iosApp["🍎 iosApp (Swift)"]
-    shared[":shared\nAppGraph\n(iOS framework)"]
-    featureRepoview[":feature:repoview\nRepoViewModel\nRepoUiState"]
-    domainContract[":domain:contract\nGitHubRepository IF\nAppScope"]
-    domainModel[":domain:model\nGitHubRepo"]
-    dataRepository[":data:repository\nGitHubRepositoryImpl\n@ContributesBinding"]
-    dataApi[":data:api\nGitHubApi\n@Inject"]
+    androidApp["androidApp"]
+    iosApp["iosApp"]
+    shared[":shared\n(DI集約・iOSフレームワーク)"]
 
-    androidApp -->|implementation| shared
-    iosApp -->|import Shared| shared
+    subgraph feature["feature"]
+        repoview[":feature:repoview"]
+    end
 
-    shared -->|api| featureRepoview
-    shared -->|implementation| dataRepository
+    subgraph domain["domain"]
+        contract[":domain:contract"]
+        model[":domain:model"]
+    end
 
-    featureRepoview -->|api| domainContract
-    featureRepoview -->|api| domainModel
+    subgraph data["data"]
+        repository[":data:repository"]
+        api[":data:api"]
+    end
 
-    dataRepository -->|implementation| domainContract
-    dataRepository -->|implementation| dataApi
+    androidApp --> shared
+    iosApp --> shared
+    shared -. DI .-> repoview
+    shared -. DI .-> repository
+    shared -. DI .-> api
 
-    dataApi -->|implementation| domainModel
-    domainContract -->|api| domainModel
+    repoview --> contract
+    repository --> contract
+    contract --> model
+    repository --> api
+    api --> model
 ```
 
 ## ビルド方法
