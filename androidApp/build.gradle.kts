@@ -28,6 +28,7 @@ dependencies {
     implementation(projects.feature.repoview)
     implementation(projects.domain.model)
     implementation(libs.metro.runtime)
+    implementation(libs.metro.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.compose.runtime)
     implementation(libs.compose.foundation)
