@@ -3,8 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
-    alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.kmpNativeCoroutines)
+    alias(libs.plugins.metro)
 }
 
 kotlin {
@@ -22,6 +21,9 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
+            export(projects.feature.repoview)
+            export(projects.domain.model)
+            export(projects.domain.contract)
         }
     }
 
@@ -31,21 +33,17 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.kotlinx.serialization.json)
-        }
-        androidMain.dependencies {
-            implementation(libs.ktor.client.okhttp)
+            implementation(projects.feature.repoview)
+            implementation(projects.data.repository)
+            implementation(projects.data.api)
+            implementation(projects.domain.contract)
+            implementation(projects.domain.model)
+            implementation(libs.metro.runtime)
         }
         iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
+            api(projects.feature.repoview)
+            api(projects.domain.model)
+            api(projects.domain.contract)
         }
     }
 }

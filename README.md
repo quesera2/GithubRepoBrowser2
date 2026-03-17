@@ -14,6 +14,7 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 | レイヤー | 技術 |
 |---|---|
 | 共通ロジック | Kotlin Multiplatform |
+| DI | metro (dev.zacsweers.metro) |
 | 通信 | Ktor |
 | JSON | kotlinx.serialization |
 | 非同期 | kotlinx.coroutines |
@@ -25,9 +26,46 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 ## プロジェクト構成
 
 ```
-├── shared/          # KMP共通コード（API・モデル・ViewModel）
-├── composeApp/      # Android アプリ（Jetpack Compose）
-└── iosApp/          # iOS アプリ（SwiftUI）
+├── shared/              # DI グラフ定義 + iOS framework
+├── domain/
+│   ├── model/           # データモデル（GitHubRepo）
+│   └── contract/        # リポジトリインターフェース + AppScope
+├── data/
+│   ├── api/             # GitHub API クライアント（Ktor）
+│   └── repository/      # リポジトリ実装（@ContributesBinding）
+├── feature/
+│   └── repoview/        # ViewModel + UI 状態
+├── androidApp/          # Android アプリ（Jetpack Compose）
+└── iosApp/              # iOS アプリ（SwiftUI）
+```
+
+## モジュール依存関係
+
+```mermaid
+graph TD
+    androidApp["📱 :androidApp"]
+    iosApp["🍎 iosApp (Swift)"]
+    shared[":shared\nAppGraph\n(iOS framework)"]
+    featureRepoview[":feature:repoview\nRepoViewModel\nRepoUiState"]
+    domainContract[":domain:contract\nGitHubRepository IF\nAppScope"]
+    domainModel[":domain:model\nGitHubRepo"]
+    dataRepository[":data:repository\nGitHubRepositoryImpl\n@ContributesBinding"]
+    dataApi[":data:api\nGitHubApi\n@Inject"]
+
+    androidApp -->|implementation| shared
+    iosApp -->|import Shared| shared
+
+    shared -->|api| featureRepoview
+    shared -->|implementation| dataRepository
+
+    featureRepoview -->|api| domainContract
+    featureRepoview -->|api| domainModel
+
+    dataRepository -->|implementation| domainContract
+    dataRepository -->|implementation| dataApi
+
+    dataApi -->|implementation| domainModel
+    domainContract -->|api| domainModel
 ```
 
 ## ビルド方法
@@ -35,9 +73,13 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 ### Android
 
 ```shell
-./gradlew :composeApp:assembleDebug
+./gradlew :androidApp:assembleDebug
 ```
 
 ### iOS
 
-`iosApp/iosApp.xcodeproj` を Xcode で開いて Run。
+```shell
+./gradlew :shared:embedAndSignAppleFrameworkForXcode
+```
+
+または `iosApp/iosApp.xcodeproj` を Xcode で開いて Run。

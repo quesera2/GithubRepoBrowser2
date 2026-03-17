@@ -38,12 +38,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(vm: RepoViewModel = viewModel<RepoViewModel>()) {
+fun App() {
+    val context = LocalContext.current
+    val vm: RepoViewModel = viewModel {
+        (context.applicationContext as AndroidApp).graph.repoViewModel
+    }
     val uiState by vm.uiState.collectAsState()
     var query by remember { mutableStateOf("") }
 
