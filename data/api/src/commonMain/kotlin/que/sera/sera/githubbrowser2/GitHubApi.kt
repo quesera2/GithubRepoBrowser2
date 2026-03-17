@@ -1,5 +1,6 @@
 package que.sera.sera.githubbrowser2
 
+import dev.zacsweers.metro.Inject
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -7,6 +8,7 @@ import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+@Inject
 class GitHubApi {
     private val client = HttpClient {
         install(ContentNegotiation) {

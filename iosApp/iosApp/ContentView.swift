@@ -10,10 +10,11 @@ final class ContentViewModel {
     var showError: Bool = false
     var errorMessage: String = ""
 
-    private let vm = RepoViewModel()
+    private let vm: RepoViewModel
     private var cancellables = Set<AnyCancellable>()
 
     init() {
+        vm = AppGraph().repoViewModel
         createPublisher(for: vm.uiStateFlow)
             .receive(on: DispatchQueue.main)
             .sink(
