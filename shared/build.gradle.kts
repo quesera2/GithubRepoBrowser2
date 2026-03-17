@@ -39,6 +39,7 @@ kotlin {
             implementation(projects.domain.contract)
             implementation(projects.domain.model)
             implementation(libs.metro.runtime)
+            implementation(libs.metro.viewmodel)
         }
         iosMain.dependencies {
             api(projects.feature.repoview)

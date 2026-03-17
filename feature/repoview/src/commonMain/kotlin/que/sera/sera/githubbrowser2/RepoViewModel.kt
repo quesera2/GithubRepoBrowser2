@@ -3,10 +3,17 @@ package que.sera.sera.githubbrowser2
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metrox.viewmodel.ViewModelKey
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+@Inject
+@ViewModelKey(RepoViewModel::class)
+@ContributesIntoMap(AppScope::class)
 class RepoViewModel(
     private val repository: GitHubRepository
 ) : ViewModel() {

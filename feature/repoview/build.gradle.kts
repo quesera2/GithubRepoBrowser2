@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.kmpNativeCoroutines)
+    alias(libs.plugins.metro)
 }
 
 kotlin {
@@ -23,6 +24,7 @@ kotlin {
             implementation(projects.domain.contract)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.metro.viewmodel)
         }
     }
 }
