@@ -24,7 +24,7 @@ kotlin {
             implementation(projects.domain.contract)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.metro.viewmodel)
+            implementation(libs.metro.runtime)
         }
     }
 }
