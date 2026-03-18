@@ -3,67 +3,44 @@ import Combine
 import KMPNativeCoroutinesCombine
 import Shared
 
-@Observable
-final class RepoViewModelWrapper {
-
-    private var vm: RepoViewModel
-    
-    var uiState: RepoUiState = RepoUiState.Idle.shared
-  
-    private var cancellables = Set<AnyCancellable>()
-
-    init(_ viewModel: RepoViewModel){
-        vm = viewModel
-        createPublisher(for: vm.uiStateFlow)
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { _ in },
-                receiveValue: { [weak self] state in
-                    self?.uiState = state
-                }
-            )
-            .store(in: &cancellables)
-    }
-
-    func fetchRepos(username: String) {
-        guard !username.isEmpty else { return }
-        vm.fetchRepos(username: username)
-    }
-}
-
-struct RepositoryView : View {
+struct RepositoryView: View {
     @Environment(\.repoViewModel) private var vm: RepoViewModel?
-    
-    @State private var wrapper: RepoViewModelWrapper?
 
     var body: some View {
-        Group {
-            if let wrapper {
-                RepositoryViewContent(
-                    uiState: wrapper.uiState,
-                    onSearch: { wrapper.fetchRepos(username: $0) }
-                )
-            }
-        }
-        .task {
-            if let vm, wrapper == nil {
-                wrapper = RepoViewModelWrapper(vm)
-            }
+        if let vm {
+            RepositoryViewContent(
+                uiStatePublisher: createPublisher(for: vm.uiStateFlow)
+                    .assertNoFailure()
+                    .receive(on: DispatchQueue.main)
+                    .eraseToAnyPublisher(),
+                onSearch: { username in
+                    guard !username.isEmpty else { return }
+                    vm.fetchRepos(username: username)
+                },
+                onRetry: { username in
+                    guard !username.isEmpty else { return }
+                    vm.fetchRepos(username: username)
+                }
+            )
         }
     }
 }
 
 struct RepositoryViewContent: View {
-    
-    var uiState: RepoUiState
-    var onSearch: (String) -> Void
 
+    var uiStatePublisher: AnyPublisher<RepoUiState, Never>
+    var onSearch: (String) -> Void
+    var onRetry: (String) -> Void
+
+    @State private var uiState: RepoUiState = RepoUiState.Idle.shared
     @State private var searchText: String = ""
     @State private var isSearchPresented = false
-    @State private var showError: Bool = false
 
-    private var errorMessage: String? {
-        (uiState as? RepoUiState.Error)?.message
+    private var isError: Binding<Bool> {
+        Binding(
+            get: { uiState is RepoUiState.Error },
+            set: { _ in }
+        )
     }
 
     var body: some View {
@@ -80,13 +57,15 @@ struct RepositoryViewContent: View {
                 onSearch(searchText)
                 isSearchPresented = false
             }
-            .alert("エラー", isPresented: $showError) {
-                Button("OK") {}
+            .alert("エラー", isPresented: isError) {
+                Button("OK") {
+                    onRetry(searchText)
+                }
             } message: {
-                Text(errorMessage ?? "")
+                Text(uiState.errorMessageOrEmpty)
             }
-            .onChange(of: uiState is RepoUiState.Error) { _, isError in
-                showError = isError
+            .onReceive(uiStatePublisher) { state in
+                uiState = state
             }
     }
 
@@ -119,6 +98,17 @@ struct RepositoryViewContent: View {
         return "リポジトリ一覧"
     }
 }
+
+// MARK: Helper
+
+extension RepoUiState {
+    
+    var errorMessageOrEmpty: String {
+        (self as? RepoUiState.Error)?.message ?? ""
+    }
+}
+
+
 // MARK: - Previews
 
 private let sampleRepos: [GitHubRepo] = [
@@ -156,36 +146,43 @@ private let sampleRepos: [GitHubRepo] = [
 
 #Preview("Idle") {
     RepositoryViewContent(
-        uiState: RepoUiState.Idle.shared,
-        onSearch: { _ in }
+        uiStatePublisher: Just(RepoUiState.Idle.shared).eraseToAnyPublisher(),
+        onSearch: { _ in },
+        onRetry: { _ in }
     )
 }
 
 #Preview("Loading") {
     RepositoryViewContent(
-        uiState: RepoUiState.Loading.shared,
-        onSearch: { _ in }
+        uiStatePublisher: Just(RepoUiState.Loading.shared).eraseToAnyPublisher(),
+        onSearch: { _ in },
+        onRetry: { _ in }
     )
 }
 
 #Preview("Success") {
     RepositoryViewContent(
-        uiState: RepoUiState.Success(repos: sampleRepos),
-        onSearch: { _ in }
+        uiStatePublisher: Just(RepoUiState.Success(repos: sampleRepos) as RepoUiState).eraseToAnyPublisher(),
+        onSearch: { _ in },
+        onRetry: { _ in }
     )
 }
 
 #Preview("Success - Empty") {
     RepositoryViewContent(
-        uiState: RepoUiState.Success(repos: []),
-        onSearch: { _ in }
+        uiStatePublisher: Just(RepoUiState.Success(repos: []) as RepoUiState).eraseToAnyPublisher(),
+        onSearch: { _ in },
+        onRetry: { _ in }
     )
 }
 
 #Preview("Error") {
-    RepositoryViewContent(
-        uiState: RepoUiState.Error(message: "ネットワークエラーが発生しました"),
-        onSearch: { _ in }
-    )
+    NavigationStack {
+        RepositoryViewContent(
+            uiStatePublisher: Just(RepoUiState.Error(message: "ネットワークエラーが発生しました") as RepoUiState).eraseToAnyPublisher(),
+            onSearch: { _ in },
+            onRetry: { _ in }
+        )
+    }
 }
 
