@@ -9,7 +9,6 @@ final class RepoViewModelWrapper {
     private var vm: RepoViewModel
     
     var uiState: RepoUiState = RepoUiState.Idle.shared
-    var errorMessage: String = ""
   
     private var cancellables = Set<AnyCancellable>()
 
@@ -21,9 +20,6 @@ final class RepoViewModelWrapper {
                 receiveCompletion: { _ in },
                 receiveValue: { [weak self] state in
                     self?.uiState = state
-                    if let error = state as? RepoUiState.Error {
-                        self?.errorMessage = error.message
-                    }
                 }
             )
             .store(in: &cancellables)
@@ -45,7 +41,6 @@ struct RepositoryView : View {
             if let wrapper {
                 RepositoryViewContent(
                     uiState: wrapper.uiState,
-                    errorMessage: wrapper.errorMessage,
                     onSearch: { wrapper.fetchRepos(username: $0) }
                 )
             }
@@ -61,38 +56,38 @@ struct RepositoryView : View {
 struct RepositoryViewContent: View {
     
     var uiState: RepoUiState
-    var errorMessage: String
     var onSearch: (String) -> Void
 
     @State private var searchText: String = ""
     @State private var isSearchPresented = false
     @State private var showError: Bool = false
 
-    var body: some View {
+    private var errorMessage: String? {
+        (uiState as? RepoUiState.Error)?.message
+    }
 
-        NavigationStack {
-            content
-                .navigationTitle(navigationTitle)
-                .searchable(
-                    text: $searchText,
-                    isPresented: $isSearchPresented,
-                    prompt: "ユーザー名を入力してください"
-                )
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.never)
-                .onSubmit(of: .search) {
-                    onSearch(searchText)
-                    isSearchPresented = false
-                }
-        }
-        .alert("エラー", isPresented: $showError) {
-            Button("OK") {}
-        } message: {
-            Text(errorMessage)
-        }
-        .onChange(of: errorMessage) { _, newValue in
-            showError = !newValue.isEmpty
-        }
+    var body: some View {
+        content
+            .navigationTitle(navigationTitle)
+            .searchable(
+                text: $searchText,
+                isPresented: $isSearchPresented,
+                prompt: "ユーザー名を入力してください"
+            )
+            .autocorrectionDisabled()
+            .textInputAutocapitalization(.never)
+            .onSubmit(of: .search) {
+                onSearch(searchText)
+                isSearchPresented = false
+            }
+            .alert("エラー", isPresented: $showError) {
+                Button("OK") {}
+            } message: {
+                Text(errorMessage ?? "")
+            }
+            .onChange(of: uiState is RepoUiState.Error) { _, isError in
+                showError = isError
+            }
     }
 
     @ViewBuilder
@@ -162,7 +157,6 @@ private let sampleRepos: [GitHubRepo] = [
 #Preview("Idle") {
     RepositoryViewContent(
         uiState: RepoUiState.Idle.shared,
-        errorMessage: "",
         onSearch: { _ in }
     )
 }
@@ -170,7 +164,6 @@ private let sampleRepos: [GitHubRepo] = [
 #Preview("Loading") {
     RepositoryViewContent(
         uiState: RepoUiState.Loading.shared,
-        errorMessage: "",
         onSearch: { _ in }
     )
 }
@@ -178,7 +171,6 @@ private let sampleRepos: [GitHubRepo] = [
 #Preview("Success") {
     RepositoryViewContent(
         uiState: RepoUiState.Success(repos: sampleRepos),
-        errorMessage: "",
         onSearch: { _ in }
     )
 }
@@ -186,7 +178,6 @@ private let sampleRepos: [GitHubRepo] = [
 #Preview("Success - Empty") {
     RepositoryViewContent(
         uiState: RepoUiState.Success(repos: []),
-        errorMessage: "",
         onSearch: { _ in }
     )
 }
@@ -194,7 +185,6 @@ private let sampleRepos: [GitHubRepo] = [
 #Preview("Error") {
     RepositoryViewContent(
         uiState: RepoUiState.Error(message: "ネットワークエラーが発生しました"),
-        errorMessage: "ネットワークエラーが発生しました",
         onSearch: { _ in }
     )
 }

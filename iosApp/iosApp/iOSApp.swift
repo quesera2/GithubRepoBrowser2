@@ -7,8 +7,10 @@ struct iOSApp: App {
     var body: some Scene {
         let graph = AppGraphKt.createGraph()
         WindowGroup {
-            RepositoryView()
-                .environment(\.repoViewModel, graph.repoViewModel)
+            NavigationStack {
+                RepositoryView()
+            }
+            .environment(\.repoViewModel, graph.repoViewModel)
         }
     }
 }
