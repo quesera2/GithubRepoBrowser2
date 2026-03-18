@@ -29,6 +29,7 @@ kotlin {
 
     sourceSets.all {
         languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+        languageSettings.enableLanguageFeature("ExpectActualClasses")
     }
 
     sourceSets {
@@ -39,6 +40,8 @@ kotlin {
             implementation(projects.domain.contract)
             implementation(projects.domain.model)
             implementation(libs.metro.runtime)
+        }
+        androidMain.dependencies {
             implementation(libs.metro.viewmodel)
         }
         iosMain.dependencies {
