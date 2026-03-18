@@ -1,10 +1,14 @@
 import SwiftUI
+import Shared
 
 @main
 struct iOSApp: App {
+    
     var body: some Scene {
+        let graph = AppGraphKt.createGraph()
         WindowGroup {
-            ContentView()
+            RepositoryView()
+                .environment(\.repoViewModel, graph.repoViewModel)
         }
     }
 }
