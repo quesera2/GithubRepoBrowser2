@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Star
@@ -45,7 +44,7 @@ import dev.zacsweers.metrox.viewmodel.metroViewModel
 fun RepositoryViewScreen(
     vm: RepoViewModel = metroViewModel()
 ) {
-    val uiState by vm.uiState.collectAsState()
+    val uiState by vm.state.collectAsState()
     var query by remember { mutableStateOf("") }
 
     RepositoryViewContent(
