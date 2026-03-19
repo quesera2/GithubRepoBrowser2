@@ -1,18 +1,15 @@
 import SwiftUI
-import Combine
-import KMPNativeCoroutinesCombine
 import Shared
 
 struct RepositoryView: View {
     @Environment(\.repoViewModel) private var vm: RepoViewModel?
 
+    @State private var uiState: RepoUiState = RepoUiState.Idle.shared
+
     var body: some View {
         if let vm {
             RepositoryViewContent(
-                uiStatePublisher: createPublisher(for: vm.uiStateFlow)
-                    .assertNoFailure()
-                    .receive(on: DispatchQueue.main)
-                    .eraseToAnyPublisher(),
+                uiState: uiState,
                 onSearch: { username in
                     guard !username.isEmpty else { return }
                     vm.fetchRepos(username: username)
@@ -22,17 +19,21 @@ struct RepositoryView: View {
                     vm.fetchRepos(username: username)
                 }
             )
+            .task {
+                for await state in vm.uiState {
+                    uiState = state
+                }
+            }
         }
     }
 }
 
 struct RepositoryViewContent: View {
 
-    var uiStatePublisher: AnyPublisher<RepoUiState, Never>
+    var uiState: RepoUiState
     var onSearch: (String) -> Void
     var onRetry: (String) -> Void
 
-    @State private var uiState: RepoUiState = RepoUiState.Idle.shared
     @State private var searchText: String = ""
     @State private var isSearchPresented = false
 
@@ -63,9 +64,6 @@ struct RepositoryViewContent: View {
                 }
             } message: {
                 Text(uiState.errorMessageOrEmpty)
-            }
-            .onReceive(uiStatePublisher) { state in
-                uiState = state
             }
     }
 
@@ -102,7 +100,7 @@ struct RepositoryViewContent: View {
 // MARK: Helper
 
 extension RepoUiState {
-    
+
     var errorMessageOrEmpty: String {
         (self as? RepoUiState.Error)?.message ?? ""
     }
@@ -146,7 +144,7 @@ private let sampleRepos: [GitHubRepo] = [
 
 #Preview("Idle") {
     RepositoryViewContent(
-        uiStatePublisher: Just(RepoUiState.Idle.shared).eraseToAnyPublisher(),
+        uiState: RepoUiState.Idle.shared,
         onSearch: { _ in },
         onRetry: { _ in }
     )
@@ -154,7 +152,7 @@ private let sampleRepos: [GitHubRepo] = [
 
 #Preview("Loading") {
     RepositoryViewContent(
-        uiStatePublisher: Just(RepoUiState.Loading.shared).eraseToAnyPublisher(),
+        uiState: RepoUiState.Loading.shared,
         onSearch: { _ in },
         onRetry: { _ in }
     )
@@ -162,7 +160,7 @@ private let sampleRepos: [GitHubRepo] = [
 
 #Preview("Success") {
     RepositoryViewContent(
-        uiStatePublisher: Just(RepoUiState.Success(repos: sampleRepos) as RepoUiState).eraseToAnyPublisher(),
+        uiState: RepoUiState.Success(repos: sampleRepos),
         onSearch: { _ in },
         onRetry: { _ in }
     )
@@ -170,7 +168,7 @@ private let sampleRepos: [GitHubRepo] = [
 
 #Preview("Success - Empty") {
     RepositoryViewContent(
-        uiStatePublisher: Just(RepoUiState.Success(repos: []) as RepoUiState).eraseToAnyPublisher(),
+        uiState: RepoUiState.Success(repos: []),
         onSearch: { _ in },
         onRetry: { _ in }
     )
@@ -179,10 +177,9 @@ private let sampleRepos: [GitHubRepo] = [
 #Preview("Error") {
     NavigationStack {
         RepositoryViewContent(
-            uiStatePublisher: Just(RepoUiState.Error(message: "ネットワークエラーが発生しました") as RepoUiState).eraseToAnyPublisher(),
+            uiState: RepoUiState.Error(message: "ネットワークエラーが発生しました"),
             onSearch: { _ in },
             onRetry: { _ in }
         )
     }
 }
-
