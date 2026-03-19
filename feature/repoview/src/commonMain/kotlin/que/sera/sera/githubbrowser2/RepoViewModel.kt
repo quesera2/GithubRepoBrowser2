@@ -17,6 +17,11 @@ class RepoViewModel(
         field = MutableStateFlow(RepoViewState())
 
     fun fetchRepos(username: String) {
+        if (username.isEmpty()) {
+            state.update { it.failure("ユーザー名が入力されていません") }
+            return
+        }
+
         viewModelScope.launch {
             state.update { it.loading() }
             try {
@@ -26,5 +31,9 @@ class RepoViewModel(
                 state.update { it.failure(e.message ?: "Unknown error") }
             }
         }
+    }
+
+    fun onErrorDismissed() {
+        state.update { it.idle() }
     }
 }
