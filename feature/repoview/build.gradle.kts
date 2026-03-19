@@ -21,6 +21,10 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    sourceSets.all {
+        languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(projects.domain.model)
