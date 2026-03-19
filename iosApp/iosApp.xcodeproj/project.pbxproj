@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		FB6B09712F5FFDF200EBF355 /* KMPNativeCoroutinesCombine in Frameworks */ = {isa = PBXBuildFile; productRef = FB6B09702F5FFDF200EBF355 /* KMPNativeCoroutinesCombine */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		F788C4A46BDFCF789FF7B22D /* GitHubBrowser2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitHubBrowser2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -45,7 +41,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FB6B09712F5FFDF200EBF355 /* KMPNativeCoroutinesCombine in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -98,7 +93,6 @@
 			);
 			name = iosApp;
 			packageProductDependencies = (
-				FB6B09702F5FFDF200EBF355 /* KMPNativeCoroutinesCombine */,
 			);
 			productName = iosApp;
 			productReference = F788C4A46BDFCF789FF7B22D /* GitHubBrowser2.app */;
@@ -129,7 +123,6 @@
 			mainGroup = DDCEB5E98302DC2250D2F6FB;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				FB6B096E2F5FFD1500EBF355 /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D1AB28221AEECC338452A735 /* Products */;
@@ -385,25 +378,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		FB6B096E2F5FFD1500EBF355 /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/rickclephas/KMP-NativeCoroutines.git";
-			requirement = {
-				kind = exactVersion;
-				version = 1.0.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		FB6B09702F5FFDF200EBF355 /* KMPNativeCoroutinesCombine */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FB6B096E2F5FFD1500EBF355 /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */;
-			productName = KMPNativeCoroutinesCombine;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 78B891854EE637DB4C05145F /* Project object */;
 }
