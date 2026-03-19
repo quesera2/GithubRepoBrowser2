@@ -5,24 +5,35 @@ import androidx.lifecycle.viewModelScope
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @Inject
 class RepoViewModel(
     private val repository: GitHubRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<RepoUiState>(RepoUiState.Idle)
 
-    val uiState: StateFlow<RepoUiState> = _uiState
+    val state: StateFlow<RepoViewState>
+        field = MutableStateFlow(RepoViewState())
 
     fun fetchRepos(username: String) {
+        if (username.isEmpty()) {
+            state.update { it.failure("ユーザー名が入力されていません") }
+            return
+        }
+
         viewModelScope.launch {
-            _uiState.value = RepoUiState.Loading
-            _uiState.value = try {
-                RepoUiState.Success(repository.fetchRepos(username))
+            state.update { it.loading() }
+            try {
+                val repos = repository.fetchRepos(username)
+                state.update { it.success(repos) }
             } catch (e: Exception) {
-                RepoUiState.Error(e.message ?: "Unknown error")
+                state.update { it.failure(e.message ?: "Unknown error") }
             }
         }
+    }
+
+    fun onErrorDismissed() {
+        state.update { it.idle() }
     }
 }

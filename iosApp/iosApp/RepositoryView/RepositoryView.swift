@@ -4,12 +4,12 @@ import Shared
 struct RepositoryView: View {
     @Environment(\.repoViewModel) private var vm: RepoViewModel?
 
-    @State private var uiState: RepoUiState = RepoUiState.Idle.shared
+    @State private var state: RepoViewState = RepoViewState.companion.initialState
 
     var body: some View {
         if let vm {
             RepositoryViewContent(
-                uiState: uiState,
+                state: state,
                 onSearch: { username in
                     guard !username.isEmpty else { return }
                     vm.fetchRepos(username: username)
@@ -17,11 +17,14 @@ struct RepositoryView: View {
                 onRetry: { username in
                     guard !username.isEmpty else { return }
                     vm.fetchRepos(username: username)
+                },
+                onDismissError: {
+                    vm.onErrorDismissed()
                 }
             )
             .task {
-                for await state in vm.uiState {
-                    uiState = state
+                for await newState in vm.state {
+                    state = newState
                 }
             }
         }
@@ -30,19 +33,13 @@ struct RepositoryView: View {
 
 struct RepositoryViewContent: View {
 
-    var uiState: RepoUiState
+    var state: RepoViewState
     var onSearch: (String) -> Void
     var onRetry: (String) -> Void
+    var onDismissError: () -> Void
 
     @State private var searchText: String = ""
     @State private var isSearchPresented = false
-
-    private var isError: Binding<Bool> {
-        Binding(
-            get: { uiState is RepoUiState.Error },
-            set: { _ in }
-        )
-    }
 
     var body: some View {
         content
@@ -58,54 +55,53 @@ struct RepositoryViewContent: View {
                 onSearch(searchText)
                 isSearchPresented = false
             }
-            .alert("エラー", isPresented: isError) {
-                Button("OK") {
-                    onRetry(searchText)
-                }
+            .alert("エラー", isPresented: state.isError.toReadOnlyBindable()) {
+                Button("再試行") { onRetry(searchText) }
+                Button("閉じる", role: .cancel) { onDismissError() }
             } message: {
-                Text(uiState.errorMessageOrEmpty)
+                Text(state.errorMessage)
             }
     }
 
     @ViewBuilder
     private var content: some View {
-        if uiState is RepoUiState.Loading {
-            ProgressView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if let success = uiState as? RepoUiState.Success {
-            if success.repos.isEmpty {
-                ContentUnavailableView(
-                    "リポジトリが見つかりません",
-                    systemImage: "folder",
-                    description: Text("このユーザーにはリポジトリがありません")
-                )
-            } else {
-                List(success.repos, id: \.id) { repo in
-                    GitHubRepositoryCell(repo: repo)
-                        .listRowSeparator(.visible)
-                }
-                .listStyle(.plain)
+        ZStack {
+            if let repos = state.repos {
+                repoListView(repos: repos)
+            }
+            if state.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
     }
 
-    private var navigationTitle: String {
-        if let success = uiState as? RepoUiState.Success {
-            return "リポジトリ一覧（\(success.repos.count)件）"
+    @ViewBuilder
+    private func repoListView(repos: [GitHubRepo]) -> some View {
+        if repos.isEmpty {
+            ContentUnavailableView(
+                "リポジトリが見つかりません",
+                systemImage: "folder",
+                description: Text("このユーザーにはリポジトリがありません")
+            )
+        } else {
+            List(repos, id: \.id) { repo in
+                GitHubRepositoryCell(repo: repo)
+                    .listRowSeparator(.visible)
+            }
+            .listStyle(.plain)
         }
-        return "リポジトリ一覧"
+    }
+
+    private var navigationTitle: String {
+        guard
+            let repos = state.repos,
+            !repos.isEmpty else {
+            return "リポジトリ一覧"
+        }
+        return "リポジトリ一覧（\(repos.count)件）"
     }
 }
-
-// MARK: Helper
-
-extension RepoUiState {
-
-    var errorMessageOrEmpty: String {
-        (self as? RepoUiState.Error)?.message ?? ""
-    }
-}
-
 
 // MARK: - Previews
 
@@ -144,42 +140,50 @@ private let sampleRepos: [GitHubRepo] = [
 
 #Preview("Idle") {
     RepositoryViewContent(
-        uiState: RepoUiState.Idle.shared,
+        state: RepoViewState.companion.initialState,
         onSearch: { _ in },
-        onRetry: { _ in }
+        onRetry: { _ in },
+        onDismissError: {}
     )
 }
 
 #Preview("Loading") {
     RepositoryViewContent(
-        uiState: RepoUiState.Loading.shared,
+        state: RepoViewState.companion.initialState.loading(),
         onSearch: { _ in },
-        onRetry: { _ in }
+        onRetry: { _ in },
+        onDismissError: {}
     )
 }
 
 #Preview("Success") {
     RepositoryViewContent(
-        uiState: RepoUiState.Success(repos: sampleRepos),
+        state: RepoViewState.companion.initialState
+            .success(repos: sampleRepos),
         onSearch: { _ in },
-        onRetry: { _ in }
+        onRetry: { _ in },
+        onDismissError: {}
     )
 }
 
 #Preview("Success - Empty") {
     RepositoryViewContent(
-        uiState: RepoUiState.Success(repos: []),
+        state: RepoViewState.companion.initialState
+            .success(repos: []),
         onSearch: { _ in },
-        onRetry: { _ in }
+        onRetry: { _ in },
+        onDismissError: {}
     )
 }
 
 #Preview("Error") {
     NavigationStack {
         RepositoryViewContent(
-            uiState: RepoUiState.Error(message: "ネットワークエラーが発生しました"),
+            state: RepoViewState.companion.initialState
+                .failure(errorMessage: "ネットワークエラーが発生しました"),
             onSearch: { _ in },
-            onRetry: { _ in }
+            onRetry: { _ in },
+            onDismissError: {}
         )
     }
 }

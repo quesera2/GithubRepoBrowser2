@@ -28,6 +28,10 @@ kotlin {
         }
     }
 
+    compilerOptions {
+        freeCompilerArgs.add("-Xexplicit-backing-fields")
+    }
+
     sourceSets.all {
         languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
         languageSettings.enableLanguageFeature("ExpectActualClasses")
