@@ -17,6 +17,9 @@ ktor = "3.4.1"
 kotlinx-coroutines = "1.10.2"
 kotlinx-serialization = "1.10.0"
 skie = "0.10.10"
+kotest = "6.1.7"
+ksp = "2.3.6"
+turbine = "1.2.1"
 metro = "0.11.4"
 
 [libraries]
@@ -49,6 +52,11 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 metro-runtime = { module = "dev.zacsweers.metro:runtime", version.ref = "metro" }
 metro-viewmodel = { module = "dev.zacsweers.metro:metrox-viewmodel", version.ref = "metro" }
 metro-viewmodel-compose = { module = "dev.zacsweers.metro:metrox-viewmodel-compose", version.ref = "metro" }
+kotest-framework-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -58,4 +66,6 @@ composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "k
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 skie = { id = "co.touchlab.skie", version.ref = "skie" }
+kotest = { id = "io.kotest", version.ref = "kotest" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
