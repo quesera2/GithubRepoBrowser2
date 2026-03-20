@@ -1,18 +1,22 @@
-package que.sera.sera.githubbrowser2
+package que.sera.sera.githubbrowser2.ui
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
-import que.sera.sera.githubbrowser2.repository.RepositoryViewScreen
+import que.sera.sera.githubbrowser2.AndroidApp
+import que.sera.sera.githubbrowser2.ui.repository.RepositoryViewScreen
+import que.sera.sera.githubbrowser2.ui.theme.GitHubBrowserTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
     val application = LocalContext.current.applicationContext as AndroidApp
     val viewModelFactory = application.graph.metroViewModelFactory
-    CompositionLocalProvider(LocalMetroViewModelFactory provides viewModelFactory) {
-        RepositoryViewScreen()
+    GitHubBrowserTheme {
+        CompositionLocalProvider(LocalMetroViewModelFactory provides viewModelFactory) {
+            RepositoryViewScreen()
+    }
     }
 }
