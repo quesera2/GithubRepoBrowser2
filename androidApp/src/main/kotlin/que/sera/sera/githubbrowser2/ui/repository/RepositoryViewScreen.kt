@@ -231,7 +231,7 @@ private fun RepoListContent(
 private fun EmptyView() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
         Icon(
             painter = painterResource(R.drawable.icon_search),
