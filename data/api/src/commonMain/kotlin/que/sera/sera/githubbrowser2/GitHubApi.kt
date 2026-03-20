@@ -25,6 +25,11 @@ class GitHubApi(
         }
     }
 
+    /**
+     * 指定した[username]のリポジトリを最大100件取得する
+     *
+     * Paging3を使おうと考えたがSwiftUIでハンドリングする方法がほとんど提供されてないので一旦スルー
+     */
     suspend fun fetchRepos(
         username: String,
         perPage: Int = 100,
