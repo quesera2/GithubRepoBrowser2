@@ -45,6 +45,7 @@ kotlin {
             implementation(projects.domain.contract)
             implementation(projects.domain.model)
             implementation(libs.metro.runtime)
+            implementation(libs.kotlinx.serialization.json)
         }
         androidMain.dependencies {
             implementation(libs.metro.viewmodel)
