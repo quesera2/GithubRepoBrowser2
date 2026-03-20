@@ -18,7 +18,7 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 | 通信 | Ktor |
 | JSON | kotlinx.serialization |
 | 非同期 | kotlinx.coroutines |
-| iOS Swift 連携 | KMP-NativeCoroutines + Combine |
+| iOS Swift 連携 | SKIE |
 | Android UI | Jetpack Compose |
 | iOS UI | SwiftUI |
 | 状態管理 | ViewModel (KMP) + StateFlow |
@@ -41,38 +41,7 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 
 ## モジュール依存関係
 
-```mermaid
-graph TD
-    androidApp["androidApp"]
-    iosApp["iosApp"]
-    shared[":shared\n(DI集約・iOSフレームワーク)"]
-
-    subgraph feature["feature"]
-        repoview[":feature:repoview"]
-    end
-
-    subgraph domain["domain"]
-        contract[":domain:contract"]
-        model[":domain:model"]
-    end
-
-    subgraph data["data"]
-        repository[":data:repository"]
-        api[":data:api"]
-    end
-
-    androidApp --> shared
-    iosApp --> shared
-    shared -. DI .-> repoview
-    shared -. DI .-> repository
-    shared -. DI .-> api
-
-    repoview --> contract
-    repository --> contract
-    contract --> model
-    repository --> api
-    api --> model
-```
+<img src="docs/image/architecture.png" />
 
 ## ビルド方法
 
