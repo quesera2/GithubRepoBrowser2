@@ -35,10 +35,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -124,7 +124,9 @@ private fun RepositoryViewContent(
             }
         }
     ) { innerPadding ->
-
+        val topPaddingPx = with(LocalDensity.current) {
+            innerPadding.calculateTopPadding().toPx()
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -135,8 +137,6 @@ private fun RepositoryViewContent(
                 innerPadding = innerPadding
             )
 
-            val topPaddingPx =
-                with(LocalDensity.current) { innerPadding.calculateTopPadding().toPx() }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -203,7 +203,9 @@ private fun RepoListContent(
         }
 
         else -> LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .imePadding(),
             contentPadding = innerPadding,
         ) {
             items(repos) { repo ->
@@ -217,8 +219,7 @@ private fun RepoListContent(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .imePadding(),
+                .padding(innerPadding),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
@@ -227,7 +228,7 @@ private fun RepoListContent(
 }
 
 @Composable
-fun EmptyView() {
+private fun EmptyView() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
