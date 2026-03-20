@@ -35,7 +35,7 @@ class GitHubApi(
      *
      * Paging3を使おうと考えたがSwiftUIでハンドリングする方法がほとんど提供されてないので一旦スルー
      */
-suspend fun fetchRepos(
+    suspend fun fetchRepos(
         username: String,
         perPage: Int = 100,
         sort: String = "updated"
