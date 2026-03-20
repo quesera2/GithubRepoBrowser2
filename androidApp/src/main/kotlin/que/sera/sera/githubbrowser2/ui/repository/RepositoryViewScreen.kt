@@ -134,7 +134,8 @@ private fun RepositoryViewContent(
             RepoListContent(
                 repos = repos,
                 isLoading = uiState.isLoading,
-                innerPadding = innerPadding
+                innerPadding = innerPadding,
+                modifier = Modifier.fillMaxSize()
             )
 
             Box(
@@ -151,6 +152,12 @@ private fun RepositoryViewContent(
                         )
                     )
             )
+
+            if (uiState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
 
             if (uiState.isError) {
                 AlertDialog(
@@ -174,55 +181,42 @@ private fun RepoListContent(
     repos: List<GitHubRepo>?,
     isLoading: Boolean,
     innerPadding: PaddingValues,
-) {
-    when {
-        repos == null -> if (!isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(innerPadding)
-                    .padding(vertical = 60.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                EmptyView()
-            }
-        }
-
-        repos.isEmpty() -> Box(
-            modifier = Modifier
-                .fillMaxSize()
+    modifier: Modifier = Modifier,
+) = when {
+    repos == null -> {
+        Box(
+            modifier = modifier
                 .padding(innerPadding)
-                .imePadding(),
-            contentAlignment = Alignment.Center
+                .padding(vertical = 60.dp),
+            contentAlignment = Alignment.TopCenter
         ) {
-            Text(
-                "No repositories found",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-
-        else -> LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .imePadding(),
-            contentPadding = innerPadding,
-        ) {
-            items(repos) { repo ->
-                RepoListViewItem(repo)
-                HorizontalDivider()
+            if (!isLoading) {
+                EmptyView()
             }
         }
     }
 
-    if (isLoading) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
+    repos.isEmpty() -> Box(
+        modifier = modifier
+            .padding(innerPadding)
+            .imePadding(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            "No repositories found",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+
+    else -> LazyColumn(
+        modifier = modifier
+            .imePadding(),
+        contentPadding = innerPadding,
+    ) {
+        items(repos) { repo ->
+            RepoListViewItem(repo)
+            HorizontalDivider()
         }
     }
 }
