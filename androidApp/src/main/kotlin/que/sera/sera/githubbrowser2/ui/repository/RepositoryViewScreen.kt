@@ -119,7 +119,8 @@ private fun RepositoryViewContent(
                     windowInsets = WindowInsets(0),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 12.dp),
                 ) {}
             }
         }
@@ -146,9 +147,8 @@ private fun RepositoryViewContent(
                         Brush.verticalGradient(
                             colors = listOf(
                                 MaterialTheme.colorScheme.surface,
-                                Color.Transparent,
+                                MaterialTheme.colorScheme.surface.copy(alpha = 0.4f),
                             ),
-                            startY = topPaddingPx * 0.3f,
                         )
                     )
             )
