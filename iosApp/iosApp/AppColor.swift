@@ -6,4 +6,5 @@ struct AppColor {
     static let secondary = Color("Secondary")
     static let outline = Color("Outline")
     static let link = Color("Link")
+    static let placeholder = Color("Placeholder")
 }
