@@ -3,32 +3,52 @@ import Shared
 
 struct GitHubRepositoryCell: View {
     let repo: GitHubRepo
-
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(repo.name)
-                .font(.headline)
-
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(AppColor.link)
+            
             if let description = repo.description_ {
                 Text(description)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .font(.system(size: 13, weight: .regular))
+                    .foregroundStyle(AppColor.secondary)
                     .lineLimit(2)
             }
-
-            HStack(spacing: 16) {
+            
+            HStack(spacing: 14) {
                 if let language = repo.language {
-                    Label(language, systemImage: "chevron.left.forwardslash.chevron.right")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 4) {
+                        Circle()
+                            .foregroundStyle(Color.languageColor(language))
+                            .frame(width: 10, height: 10)
+                        
+                        Text(language)
+                            .font(.system(size: 12, weight: .regular))
+                            .foregroundStyle(AppColor.secondary)
+                    }
                 }
-
-                Label("\(repo.stars)", systemImage: "star")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                
+                detailLabel(.iconStar, label: "\(repo.stars)")
+                
+                detailLabel(.iconFork, label: "\(repo.forks)")
             }
         }
         .padding(.vertical, 4)
+    }
+    
+    @ViewBuilder
+    private func detailLabel(_ image: ImageResource, label: String) -> some View {
+        HStack(spacing: 4) {
+            Image(image)
+                .renderingMode(.template)
+                .foregroundStyle(AppColor.secondary)
+
+            Text(label)
+                .font(.system(size: 12, weight: .regular))
+                .foregroundStyle(AppColor.secondary)
+        }
     }
 }
 
