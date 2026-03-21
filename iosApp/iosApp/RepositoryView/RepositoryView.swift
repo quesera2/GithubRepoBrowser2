@@ -3,9 +3,9 @@ import Shared
 
 struct RepositoryView: View {
     @Environment(\.repoViewModel) private var vm: RepoViewModel?
-
+    
     @State private var state: RepoViewState = RepoViewState.companion.initialState
-
+    
     var body: some View {
         if let vm {
             RepositoryViewContent(
@@ -32,15 +32,15 @@ struct RepositoryView: View {
 }
 
 struct RepositoryViewContent: View {
-
+    
     var state: RepoViewState
     var onSearch: (String) -> Void
     var onRetry: (String) -> Void
     var onDismissError: () -> Void
-
+    
     @State private var searchText: String = ""
     @State private var isSearchPresented = false
-
+    
     var body: some View {
         content
             .navigationTitle(navigationTitle)
@@ -62,7 +62,7 @@ struct RepositoryViewContent: View {
                 Text(state.errorMessage)
             }
     }
-
+    
     @ViewBuilder
     private var content: some View {
         ZStack {
@@ -75,7 +75,7 @@ struct RepositoryViewContent: View {
             }
         }
     }
-
+    
     @ViewBuilder
     private func repoListView(repos: [GitHubRepo]) -> some View {
         if repos.isEmpty {
@@ -87,12 +87,11 @@ struct RepositoryViewContent: View {
         } else {
             List(repos, id: \.id) { repo in
                 GitHubRepositoryCell(repo: repo)
-                    .listRowSeparator(.visible)
             }
             .listStyle(.plain)
         }
     }
-
+    
     private var navigationTitle: String {
         guard
             let repos = state.repos,
