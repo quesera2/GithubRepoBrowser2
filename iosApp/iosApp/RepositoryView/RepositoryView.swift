@@ -103,7 +103,7 @@ struct RepositoryViewContent: View {
                     }
                 }
                 .listStyle(.plain)
-                .contentMargins(.top, -36, for: .scrollContent)
+                .contentMargins(.top, -36, for: .scrollContent) // SearchBar分マージンが空いてしまうためハック的な対応を入れている
             }
         } else if !isLoading {
             VStack {
