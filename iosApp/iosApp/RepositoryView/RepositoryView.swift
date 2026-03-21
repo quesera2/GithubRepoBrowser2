@@ -3,9 +3,9 @@ import Shared
 
 struct RepositoryView: View {
     @Environment(\.repoViewModel) private var vm: RepoViewModel?
-
+    
     @State private var state: RepoViewState = RepoViewState.companion.initialState
-
+    
     var body: some View {
         if let vm {
             RepositoryViewContent(
@@ -32,22 +32,37 @@ struct RepositoryView: View {
 }
 
 struct RepositoryViewContent: View {
-
+    
     var state: RepoViewState
     var onSearch: (String) -> Void
     var onRetry: (String) -> Void
     var onDismissError: () -> Void
-
+    
     @State private var searchText: String = ""
     @State private var isSearchPresented = false
 
     var body: some View {
         content
-            .navigationTitle(navigationTitle)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Search")
+                            .font(.system(size: 35, weight: .bold))
+                            .foregroundStyle(AppColor.primary)
+                        Text("Find repositories by username")
+                            .font(.system(size: 15, weight: .regular))
+                            .foregroundStyle(AppColor.secondary)
+                    }
+                    .padding(.top, 40)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+            .toolbarRole(.editor)
             .searchable(
                 text: $searchText,
                 isPresented: $isSearchPresented,
-                prompt: "ユーザー名を入力してください"
+                placement: .toolbar,
+                prompt: "Search username"
             )
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
@@ -55,52 +70,66 @@ struct RepositoryViewContent: View {
                 onSearch(searchText)
                 isSearchPresented = false
             }
-            .alert("エラー", isPresented: state.isError.toReadOnlyBindable()) {
-                Button("再試行") { onRetry(searchText) }
-                Button("閉じる", role: .cancel) { onDismissError() }
+            .alert("Error", isPresented: state.isError.toReadOnlyBindable()) {
+                Button("Retry") { onRetry(searchText) }
+                Button("Close", role: .cancel) { onDismissError() }
             } message: {
                 Text(state.errorMessage)
             }
     }
-
+    
     @ViewBuilder
     private var content: some View {
         ZStack {
-            if let repos = state.repos {
-                repoListView(repos: repos)
-            }
+            repoListContent(repos: state.repos, isLoading: state.isLoading)
+            
             if state.isLoading {
                 ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
     }
-
+    
     @ViewBuilder
-    private func repoListView(repos: [GitHubRepo]) -> some View {
-        if repos.isEmpty {
-            ContentUnavailableView(
-                "リポジトリが見つかりません",
-                systemImage: "folder",
-                description: Text("このユーザーにはリポジトリがありません")
-            )
-        } else {
-            List(repos, id: \.id) { repo in
-                GitHubRepositoryCell(repo: repo)
-                    .listRowSeparator(.visible)
+    private func repoListContent(repos: [GitHubRepo]?, isLoading: Bool) -> some View {
+        if let repos {
+            if repos.isEmpty {
+                Text("No repositories found")
+                    .font(.system(size: 15, weight: .regular))
+                    .foregroundStyle(AppColor.secondary)
+            } else {
+                List {
+                    ForEach(repos, id: \.id) { repo in
+                        GitHubRepositoryCell(repo: repo)
+                    }
+                }
+                .listStyle(.plain)
+                .contentMargins(.top, -36, for: .scrollContent) // SearchBar分マージンが空いてしまうためハック的な対応を入れている
             }
-            .listStyle(.plain)
+        } else if !isLoading {
+            VStack {
+                emptyView
+                    .padding(.top, 60)
+                Spacer()
+            }
+            .frame(maxWidth: .infinity)
         }
     }
-
-    private var navigationTitle: String {
-        guard
-            let repos = state.repos,
-            !repos.isEmpty else {
-            return "リポジトリ一覧"
+    
+    @ViewBuilder
+    private var emptyView: some View {
+        VStack(spacing: 16) {
+            Image(.iconSearch)
+                .renderingMode(.template)
+                .resizable()
+                .frame(width: 44, height: 44)
+                .foregroundStyle(AppColor.placeholder)
+            
+            Text("Search for a GitHub user")
+                .font(.system(size: 15, weight: .regular))
+                .foregroundStyle(AppColor.placeholder)
         }
-        return "リポジトリ一覧（\(repos.count)件）"
     }
+    
 }
 
 // MARK: - Previews
@@ -139,41 +168,49 @@ private let sampleRepos: [GitHubRepo] = [
 ]
 
 #Preview("Idle") {
-    RepositoryViewContent(
-        state: RepoViewState.companion.initialState,
-        onSearch: { _ in },
-        onRetry: { _ in },
-        onDismissError: {}
-    )
+    NavigationStack {
+        RepositoryViewContent(
+            state: RepoViewState.companion.initialState,
+            onSearch: { _ in },
+            onRetry: { _ in },
+            onDismissError: {}
+        )
+    }
 }
 
 #Preview("Loading") {
-    RepositoryViewContent(
-        state: RepoViewState.companion.initialState.loading(),
-        onSearch: { _ in },
-        onRetry: { _ in },
-        onDismissError: {}
-    )
+    NavigationStack {
+        RepositoryViewContent(
+            state: RepoViewState.companion.initialState.loading(),
+            onSearch: { _ in },
+            onRetry: { _ in },
+            onDismissError: {}
+        )
+    }
 }
 
 #Preview("Success") {
-    RepositoryViewContent(
-        state: RepoViewState.companion.initialState
-            .success(repos: sampleRepos),
-        onSearch: { _ in },
-        onRetry: { _ in },
-        onDismissError: {}
-    )
+    NavigationStack {
+        RepositoryViewContent(
+            state: RepoViewState.companion.initialState
+                .success(repos: sampleRepos),
+            onSearch: { _ in },
+            onRetry: { _ in },
+            onDismissError: {}
+        )
+    }
 }
 
 #Preview("Success - Empty") {
-    RepositoryViewContent(
-        state: RepoViewState.companion.initialState
-            .success(repos: []),
-        onSearch: { _ in },
-        onRetry: { _ in },
-        onDismissError: {}
-    )
+    NavigationStack {
+        RepositoryViewContent(
+            state: RepoViewState.companion.initialState
+                .success(repos: []),
+            onSearch: { _ in },
+            onRetry: { _ in },
+            onDismissError: {}
+        )
+    }
 }
 
 #Preview("Error") {
