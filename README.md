@@ -26,13 +26,13 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 ## プロジェクト構成
 
 ```
-├── shared/              # DI グラフ定義 + iOS framework
+├── shared/              # DI グラフ定義
 ├── domain/
-│   ├── model/           # データモデル（GitHubRepo）
-│   └── contract/        # リポジトリインターフェース + AppScope
+│   ├── model/           # データモデル
+│   └── contract/        # DIP のためインターフェースを定義
 ├── data/
-│   ├── api/             # GitHub API クライアント（Ktor）
-│   └── repository/      # リポジトリ実装（@ContributesBinding）
+│   ├── api/             # API クライアント（Ktor）
+│   └── repository/      # リポジトリ実装
 ├── feature/
 │   └── repoview/        # ViewModel + UI 状態
 ├── androidApp/          # Android アプリ（Jetpack Compose）
