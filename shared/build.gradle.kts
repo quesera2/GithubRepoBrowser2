@@ -25,6 +25,7 @@ kotlin {
             export(projects.feature.repoview)
             export(projects.domain.model)
             export(projects.domain.contract)
+            export(libs.moko.resources)
         }
     }
 
@@ -54,6 +55,7 @@ kotlin {
             api(projects.feature.repoview)
             api(projects.domain.model)
             api(projects.domain.contract)
+            api(libs.moko.resources)
         }
     }
 }
