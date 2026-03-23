@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="search_title">Search</string>
+    <string name="search_subtitle">Find repositories by username</string>
+    <string name="search_placeholder">Search username</string>
+    <string name="no_repositories_found">No repositories found</string>
+    <string name="search_for_user">Search for a GitHub user</string>
+    <string name="error_title">Error</string>
+    <string name="retry_button">Retry</string>
+    <string name="close_button">Close</string>
+</resources>
