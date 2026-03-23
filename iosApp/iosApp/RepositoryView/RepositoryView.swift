@@ -46,10 +46,10 @@ struct RepositoryViewContent: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(MR.strings().search_title)
+                        Text(\.search_title)
                             .font(.system(size: 35, weight: .bold))
                             .foregroundStyle(Color.themePrimary)
-                        Text(MR.strings().search_subtitle)
+                        Text(\.search_subtitle)
                             .font(.system(size: 15, weight: .regular))
                             .foregroundStyle(Color.themeSecondary)
                     }
@@ -62,7 +62,7 @@ struct RepositoryViewContent: View {
             text: $searchText,
                 isPresented: $isSearchPresented,
                 placement: .toolbar,
-                prompt: MR.strings().search_placeholder.desc().localized()
+                prompt: .stringResource(\.search_placeholder)
             )
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
@@ -70,9 +70,9 @@ struct RepositoryViewContent: View {
                 onSearch(searchText)
                 isSearchPresented = false
             }
-            .alert(MR.strings().error_title.desc().localized(), isPresented: state.isError.toReadOnlyBindable()) {
-                Button(MR.strings().retry_button.desc().localized()) { onRetry(searchText) }
-                Button(MR.strings().close_button.desc().localized(), role: .cancel) { onDismissError() }
+            .alert(.stringResource(\.error_title), isPresented: state.isError.toReadOnlyBindable()) {
+                Button(.stringResource(\.retry_button)) { onRetry(searchText) }
+                Button(.stringResource(\.close_button), role: .cancel) { onDismissError() }
             } message: {
                 Text(state.errorMessage)
             }
@@ -93,7 +93,7 @@ struct RepositoryViewContent: View {
     private func repoListContent(repos: [GitHubRepo]?, isLoading: Bool) -> some View {
         if let repos {
             if repos.isEmpty {
-                Text(MR.strings().no_repositories_found)
+                Text(\.no_repositories_found)
                     .font(.system(size: 15, weight: .regular))
                     .foregroundStyle(.secondary)
             } else {
@@ -124,7 +124,7 @@ struct RepositoryViewContent: View {
                 .frame(width: 44, height: 44)
                 .foregroundStyle(Color.themePlaceholder)
             
-            Text(MR.strings().search_for_user)
+            Text(\.search_for_user)
                 .font(.system(size: 15, weight: .regular))
                 .foregroundStyle(Color.themePlaceholder)
         }
