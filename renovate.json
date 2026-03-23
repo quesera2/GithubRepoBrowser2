@@ -3,10 +3,14 @@
   "extends": [
     "config:recommended"
   ],
-  "labels": ["renovate"],
+  "labels": [
+    "renovate"
+  ],
   "timezone": "Asia/Tokyo",
-  "schedule": ["before 9am"],
+  "schedule": [
+    "before 9am"
+  ],
   "prHourlyLimit": 3,
   "prConcurrentLimit": 10,
-  "stabilityDays": 0
+  "minimumReleaseAge": null
 }
