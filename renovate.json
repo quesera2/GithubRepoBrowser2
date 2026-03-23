@@ -8,21 +8,5 @@
   "schedule": ["before 9am"],
   "prHourlyLimit": 3,
   "prConcurrentLimit": 10,
-  "stabilityDays": 0,
-  "packageRules": [
-    {
-      "matchManagers": ["gradle", "gradle-wrapper"],
-      "enabled": true
-    },
-    {
-      "matchPackageNames": ["org.jetbrains.kotlin.*", "org.jetbrains.kotlinx.*"],
-      "groupName": "Kotlin",
-      "enabled": true
-    },
-    {
-      "matchPackageNames": ["io.ktor.*"],
-      "groupName": "Ktor",
-      "enabled": true
-    }
-  ]
+  "stabilityDays": 0
 }
