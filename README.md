@@ -13,15 +13,16 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 
 | レイヤー | 技術 |
 |---|---|
-| 共通ロジック | Kotlin Multiplatform |
-| DI | metro (dev.zacsweers.metro) |
-| 通信 | Ktor |
-| JSON | kotlinx.serialization |
-| 非同期 | kotlinx.coroutines |
-| iOS Swift 連携 | SKIE |
-| Android UI | Jetpack Compose |
-| iOS UI | SwiftUI |
-| 状態管理 | ViewModel (KMP) + StateFlow |
+| 共通ロジック | [Kotlin Multiplatform](https://www.jetbrains.com/kotlin-multiplatform/) |
+| DI | [metro](https://zacsweers.github.io/metro/) |
+| 通信 | [Ktor](https://ktor.io/) |
+| JSON | [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) |
+| 非同期 | [kotlinx.coroutines](https://github.com/Kotlin/kotlinx.coroutines) |
+| 多言語化 | [Moko Resources](https://github.com/icerockdev/moko-resources) |
+| iOS Swift 連携 | [SKIE](https://skie.touchlab.co/) |
+| Android UI | [Jetpack Compose](https://developer.android.com/compose) |
+| iOS UI | [SwiftUI](https://developer.apple.com/jp/swiftui/) |
+| 状態管理 | ViewModel (KMP版) + StateFlow |
 
 ## プロジェクト構成
 
