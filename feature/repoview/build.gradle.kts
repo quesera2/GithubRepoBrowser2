@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.metro)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotest)
+    alias(libs.plugins.mokoResources)
 }
 
 kotlin {
@@ -34,6 +35,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.metro.runtime)
+            implementation(libs.moko.resources)
         }
         commonTest.dependencies {
             implementation(libs.kotest.framework.engine)
@@ -42,4 +44,8 @@ kotlin {
             implementation(libs.turbine)
         }
     }
+}
+
+multiplatformResources {
+    resourcesPackage.set("que.sera.sera.githubbrowser2.feature.repoview")
 }

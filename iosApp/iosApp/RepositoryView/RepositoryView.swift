@@ -46,12 +46,12 @@ struct RepositoryViewContent: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Search")
+                        Text(\.search_title)
                             .font(.system(size: 35, weight: .bold))
-                            .foregroundStyle(AppColor.primary)
-                        Text("Find repositories by username")
+                            .foregroundStyle(Color.themePrimary)
+                        Text(\.search_subtitle)
                             .font(.system(size: 15, weight: .regular))
-                            .foregroundStyle(AppColor.secondary)
+                            .foregroundStyle(Color.themeSecondary)
                     }
                     .padding(.top, 40)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -59,10 +59,10 @@ struct RepositoryViewContent: View {
             }
             .toolbarRole(.editor)
             .searchable(
-                text: $searchText,
+            text: $searchText,
                 isPresented: $isSearchPresented,
                 placement: .toolbar,
-                prompt: "Search username"
+                prompt: .stringResource(\.search_placeholder)
             )
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
@@ -70,9 +70,9 @@ struct RepositoryViewContent: View {
                 onSearch(searchText)
                 isSearchPresented = false
             }
-            .alert("Error", isPresented: state.isError.toReadOnlyBindable()) {
-                Button("Retry") { onRetry(searchText) }
-                Button("Close", role: .cancel) { onDismissError() }
+            .alert(.stringResource(\.error_title), isPresented: state.isError.toReadOnlyBindable()) {
+                Button(.stringResource(\.retry_button)) { onRetry(searchText) }
+                Button(.stringResource(\.close_button), role: .cancel) { onDismissError() }
             } message: {
                 Text(state.errorMessage)
             }
@@ -93,9 +93,9 @@ struct RepositoryViewContent: View {
     private func repoListContent(repos: [GitHubRepo]?, isLoading: Bool) -> some View {
         if let repos {
             if repos.isEmpty {
-                Text("No repositories found")
+                Text(\.no_repositories_found)
                     .font(.system(size: 15, weight: .regular))
-                    .foregroundStyle(AppColor.secondary)
+                    .foregroundStyle(.secondary)
             } else {
                 List {
                     ForEach(repos, id: \.id) { repo in
@@ -122,11 +122,11 @@ struct RepositoryViewContent: View {
                 .renderingMode(.template)
                 .resizable()
                 .frame(width: 44, height: 44)
-                .foregroundStyle(AppColor.placeholder)
+                .foregroundStyle(Color.themePlaceholder)
             
-            Text("Search for a GitHub user")
+            Text(\.search_for_user)
                 .font(.system(size: 15, weight: .regular))
-                .foregroundStyle(AppColor.placeholder)
+                .foregroundStyle(Color.themePlaceholder)
         }
     }
     

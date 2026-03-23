@@ -44,11 +44,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import dev.icerock.moko.resources.compose.stringResource
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 import que.sera.sera.githubbrowser2.GitHubRepo
 import que.sera.sera.githubbrowser2.R
 import que.sera.sera.githubbrowser2.RepoViewModel
 import que.sera.sera.githubbrowser2.RepoViewState
+import que.sera.sera.githubbrowser2.feature.repoview.MR
 
 @Composable
 fun RepositoryViewScreen(
@@ -80,9 +82,9 @@ private fun RepositoryViewContent(
                         Column(
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Text("Search")
+                            Text(stringResource(MR.strings.search_title))
                             Text(
-                                text = "Find repositories by username",
+                                text = stringResource(MR.strings.search_subtitle),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -111,7 +113,7 @@ private fun RepositoryViewContent(
                             },
                             expanded = false,
                             onExpandedChange = {},
-                            placeholder = { Text("Search username") },
+                            placeholder = { Text(stringResource(MR.strings.search_placeholder)) },
                         )
                     },
                     expanded = false,
@@ -162,13 +164,13 @@ private fun RepositoryViewContent(
             if (uiState.isError) {
                 AlertDialog(
                     onDismissRequest = onDismissErrorDialog,
-                    title = { Text("Error") },
+                    title = { Text(stringResource(MR.strings.error_title)) },
                     text = { Text(uiState.errorMessage) },
                     confirmButton = {
-                        TextButton(onClick = { onSearch(query) }) { Text("Retry") }
+                        TextButton(onClick = { onSearch(query) }) { Text(stringResource(MR.strings.retry_button)) }
                     },
                     dismissButton = {
-                        TextButton(onClick = onDismissErrorDialog) { Text("Close") }
+                        TextButton(onClick = onDismissErrorDialog) { Text(stringResource(MR.strings.close_button)) }
                     },
                 )
             }
@@ -203,7 +205,7 @@ private fun RepoListContent(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            "No repositories found",
+            stringResource(MR.strings.no_repositories_found),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -234,7 +236,7 @@ private fun EmptyView() {
             modifier = Modifier.size(44.dp),
         )
         Text(
-            text = "Search for a GitHub user",
+            text = stringResource(MR.strings.search_for_user),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.outline,
         )
