@@ -167,6 +167,7 @@
 		};
 		FBD9CBF92F70DDC100361AD0 /* Copy Moko Resource */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);

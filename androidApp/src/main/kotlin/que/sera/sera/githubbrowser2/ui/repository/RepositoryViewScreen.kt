@@ -37,15 +37,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import dev.icerock.moko.resources.compose.localized
 import dev.icerock.moko.resources.compose.stringResource
+import dev.icerock.moko.resources.desc.desc
 import dev.zacsweers.metrox.viewmodel.metroViewModel
+import que.sera.sera.githubbrowser2.ErrorMessage
 import que.sera.sera.githubbrowser2.GitHubRepo
 import que.sera.sera.githubbrowser2.R
 import que.sera.sera.githubbrowser2.RepoViewModel
@@ -127,9 +129,6 @@ private fun RepositoryViewContent(
             }
         }
     ) { innerPadding ->
-        val topPaddingPx = with(LocalDensity.current) {
-            innerPadding.calculateTopPadding().toPx()
-        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -161,20 +160,36 @@ private fun RepositoryViewContent(
                 )
             }
 
-            if (uiState.isError) {
-                AlertDialog(
-                    onDismissRequest = onDismissErrorDialog,
-                    title = { Text(stringResource(MR.strings.error_title)) },
-                    text = { Text(uiState.errorMessage) },
-                    confirmButton = {
-                        TextButton(onClick = { onSearch(query) }) { Text(stringResource(MR.strings.retry_button)) }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = onDismissErrorDialog) { Text(stringResource(MR.strings.close_button)) }
-                    },
-                )
+            uiState.errorMessage?.let { errorMessage ->
+                ErrorDialog(errorMessage = errorMessage, onDismiss = onDismissErrorDialog)
             }
         }
+    }
+}
+
+@Composable
+private fun ErrorDialog(
+    errorMessage: ErrorMessage,
+    onDismiss: () -> Unit,
+) {
+    val message = errorMessage.message.localized()
+    when (errorMessage) {
+        is ErrorMessage.CanRetry -> AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(stringResource(MR.strings.error_title)) },
+            text = { Text(message) },
+            confirmButton = {
+                TextButton(onClick = errorMessage.retryAction) { Text(stringResource(MR.strings.retry_button)) }
+            },
+            dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(MR.strings.close_button)) } },
+        )
+
+        is ErrorMessage.CancelOnly -> AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(stringResource(MR.strings.error_title)) },
+            text = { Text(message) },
+            confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(MR.strings.close_button)) } },
+        )
     }
 }
 
@@ -263,7 +278,8 @@ private class RepoViewStateProvider : PreviewParameterProvider<RepoViewState> {
         "Loading" to RepoViewState().loading(),
         "Success" to RepoViewState().success(sampleRepos),
         "Empty" to RepoViewState().success(emptyList()),
-        "Error" to RepoViewState().failure("Not Found"),
+        "Retry Error" to RepoViewState().failure(ErrorMessage.CanRetry("Not Found".desc()) {}),
+        "Cancel Error" to RepoViewState().failure(ErrorMessage.CancelOnly("Not Found".desc())),
     )
     override val values = named.map { it.second }.asSequence()
     override fun getDisplayName(index: Int) = named[index].first

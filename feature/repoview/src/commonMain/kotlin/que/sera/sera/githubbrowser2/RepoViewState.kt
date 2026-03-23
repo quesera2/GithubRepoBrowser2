@@ -5,7 +5,7 @@ import kotlin.native.ObjCName
 data class RepoViewState(
     val isLoading: Boolean = false,
     val repos: List<GitHubRepo>? = null,
-    val errorMessage: String = "",
+    val errorMessage: ErrorMessage? = null,
 ) {
     companion object {
         @OptIn(kotlin.experimental.ExperimentalObjCName::class)
@@ -15,11 +15,11 @@ data class RepoViewState(
     }
 
     val isError: Boolean
-        get() = errorMessage.isNotEmpty()
+        get() = errorMessage != null
 
     fun idle() = copy(
         isLoading = false,
-        errorMessage = "",
+        errorMessage = null,
     )
 
     fun loading() = copy(
@@ -29,10 +29,10 @@ data class RepoViewState(
     fun success(repos: List<GitHubRepo>) = copy(
         isLoading = false,
         repos = repos,
-        errorMessage = ""
+        errorMessage = null
     )
 
-    fun failure(errorMessage: String) = copy(
+    fun failure(errorMessage: ErrorMessage) = copy(
         isLoading = false,
         errorMessage = errorMessage,
     )

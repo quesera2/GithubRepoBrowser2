@@ -9,7 +9,7 @@ extension StringProtocol where Self == String {
 
 extension Text {
     init(_ resource: KeyPath<MR.strings, StringResource>) {
-        self.init(LocalizedStringKey(MR.strings()[keyPath: resource].resourceId),
-                  bundle: MR.strings()[keyPath: resource].bundle)
+        let r = MR.strings()[keyPath: resource]
+        self.init(LocalizedStringKey(r.resourceId), bundle: r.bundle)
     }
 }

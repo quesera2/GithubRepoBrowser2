@@ -11,11 +11,6 @@ struct RepositoryView: View {
             RepositoryViewContent(
                 state: state,
                 onSearch: { username in
-                    guard !username.isEmpty else { return }
-                    vm.fetchRepos(username: username)
-                },
-                onRetry: { username in
-                    guard !username.isEmpty else { return }
                     vm.fetchRepos(username: username)
                 },
                 onDismissError: {
@@ -35,7 +30,6 @@ struct RepositoryViewContent: View {
     
     var state: RepoViewState
     var onSearch: (String) -> Void
-    var onRetry: (String) -> Void
     var onDismissError: () -> Void
     
     @State private var searchText: String = ""
@@ -71,10 +65,12 @@ struct RepositoryViewContent: View {
                 isSearchPresented = false
             }
             .alert(.stringResource(\.error_title), isPresented: state.isError.toReadOnlyBindable()) {
-                Button(.stringResource(\.retry_button)) { onRetry(searchText) }
+                if let e = state.errorMessage as? ErrorMessage.CanRetry {
+                    Button(.stringResource(\.retry_button)) { e.retryAction() }
+                }
                 Button(.stringResource(\.close_button), role: .cancel) { onDismissError() }
             } message: {
-                Text(state.errorMessage)
+                Text(verbatim: state.errorMessage?.message.localized() ?? "")
             }
     }
     
@@ -172,7 +168,6 @@ private let sampleRepos: [GitHubRepo] = [
         RepositoryViewContent(
             state: RepoViewState.companion.initialState,
             onSearch: { _ in },
-            onRetry: { _ in },
             onDismissError: {}
         )
     }
@@ -183,7 +178,6 @@ private let sampleRepos: [GitHubRepo] = [
         RepositoryViewContent(
             state: RepoViewState.companion.initialState.loading(),
             onSearch: { _ in },
-            onRetry: { _ in },
             onDismissError: {}
         )
     }
@@ -195,7 +189,6 @@ private let sampleRepos: [GitHubRepo] = [
             state: RepoViewState.companion.initialState
                 .success(repos: sampleRepos),
             onSearch: { _ in },
-            onRetry: { _ in },
             onDismissError: {}
         )
     }
@@ -207,19 +200,33 @@ private let sampleRepos: [GitHubRepo] = [
             state: RepoViewState.companion.initialState
                 .success(repos: []),
             onSearch: { _ in },
-            onRetry: { _ in },
             onDismissError: {}
         )
     }
 }
 
-#Preview("Error") {
+#Preview("Error - CanRetry") {
     NavigationStack {
         RepositoryViewContent(
             state: RepoViewState.companion.initialState
-                .failure(errorMessage: "ネットワークエラーが発生しました"),
+                .failure(errorMessage: ErrorMessage.CanRetry(
+                    message: RawStringDesc(string: "ネットワークエラーが発生しました"),
+                    retryAction: {}
+                )),
             onSearch: { _ in },
-            onRetry: { _ in },
+            onDismissError: {}
+        )
+    }
+}
+
+#Preview("Error - CancelOnly") {
+    NavigationStack {
+        RepositoryViewContent(
+            state: RepoViewState.companion.initialState
+                .failure(errorMessage: ErrorMessage.CancelOnly(
+                    message: RawStringDesc(string: "ユーザー名を入力してください")
+                )),
+            onSearch: { _ in },
             onDismissError: {}
         )
     }
