@@ -80,6 +80,7 @@
 			buildConfigurationList = AA3663F8EF4F0D403A907241 /* Build configuration list for PBXNativeTarget "iosApp" */;
 			buildPhases = (
 				0D8EA7E0BACEF74C5754AA0B /* Compile Kotlin Framework */,
+				FBD9CBF92F70DDC100361AD0 /* Copy Moko Resource */,
 				7359EA46AC4E2F0AE4A6436D /* Sources */,
 				7BFC88EBD4F983CBD1045C67 /* Frameworks */,
 				7F1371FD55C0ED678521CA04 /* Resources */,
@@ -163,6 +164,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+		};
+		FBD9CBF92F70DDC100361AD0 /* Copy Moko Resource */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Moko Resource";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "TASK=\"copyResources${KOTLIN_FRAMEWORK_BUILD_TYPE:-$CONFIGURATION}FrameworkIos${ARCHS}\"\n\n  \"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" \":shared:$TASK\" \\\n      -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n      -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

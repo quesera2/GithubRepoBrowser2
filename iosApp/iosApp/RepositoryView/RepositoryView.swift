@@ -46,10 +46,10 @@ struct RepositoryViewContent: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(MR.strings().search_title.desc().localized())
+                        Text(MR.strings().search_title)
                             .font(.system(size: 35, weight: .bold))
                             .foregroundStyle(Color.themePrimary)
-                        Text(MR.strings().search_subtitle.desc().localized())
+                        Text(MR.strings().search_subtitle)
                             .font(.system(size: 15, weight: .regular))
                             .foregroundStyle(Color.themeSecondary)
                     }
@@ -93,7 +93,7 @@ struct RepositoryViewContent: View {
     private func repoListContent(repos: [GitHubRepo]?, isLoading: Bool) -> some View {
         if let repos {
             if repos.isEmpty {
-                Text(MR.strings().no_repositories_found.desc().localized())
+                Text(MR.strings().no_repositories_found)
                     .font(.system(size: 15, weight: .regular))
                     .foregroundStyle(.secondary)
             } else {
@@ -124,7 +124,7 @@ struct RepositoryViewContent: View {
                 .frame(width: 44, height: 44)
                 .foregroundStyle(Color.themePlaceholder)
             
-            Text(MR.strings().search_for_user.desc().localized())
+            Text(MR.strings().search_for_user)
                 .font(.system(size: 15, weight: .regular))
                 .foregroundStyle(Color.themePlaceholder)
         }

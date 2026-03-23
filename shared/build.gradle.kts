@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.metro)
     alias(libs.plugins.skie)
+    alias(libs.plugins.mokoResources)
 }
 
 kotlin {
