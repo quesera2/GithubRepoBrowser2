@@ -9,12 +9,12 @@ struct GitHubRepositoryCell: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(repo.name)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(AppColor.link)
+                    .foregroundStyle(Color.themeLink)
 
                 if let description = repo.description_ {
                     Text(description)
                         .font(.system(size: 13, weight: .regular))
-                        .foregroundStyle(AppColor.secondary)
+                        .foregroundStyle(.secondary)
                         .lineLimit(2)
                 }
 
@@ -27,7 +27,7 @@ struct GitHubRepositoryCell: View {
 
                             Text(language)
                                 .font(.system(size: 12, weight: .regular))
-                                .foregroundStyle(AppColor.secondary)
+                                .foregroundStyle(Color.themeSecondary)
                         }
                     }
 
@@ -41,7 +41,7 @@ struct GitHubRepositoryCell: View {
             .padding(.vertical, 14)
             
             Divider()
-                  .overlay(AppColor.outline)
+                  .overlay(.themeOutline)
 
         }
         .listRowInsets(EdgeInsets())
@@ -51,15 +51,15 @@ struct GitHubRepositoryCell: View {
     
     
     @ViewBuilder
-    private func detailLabel(_ image: ImageResource, label: String) -> some View {
+    private func detailLabel(_ image: SwiftUI.ImageResource, label: String) -> some View {
         HStack(spacing: 4) {
             Image(image)
                 .renderingMode(.template)
-                .foregroundStyle(AppColor.secondary)
+                .foregroundStyle(Color.themeAccent)
             
             Text(label)
                 .font(.system(size: 12, weight: .regular))
-                .foregroundStyle(AppColor.secondary)
+                .foregroundStyle(Color.themeSecondary)
         }
     }
 }
