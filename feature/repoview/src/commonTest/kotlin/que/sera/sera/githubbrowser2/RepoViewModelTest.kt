@@ -1,14 +1,17 @@
 package que.sera.sera.githubbrowser2
 
 import app.cash.turbine.test
+import dev.icerock.moko.resources.desc.desc
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import que.sera.sera.githubbrowser2.feature.repoview.MR
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RepoViewModelTest : DescribeSpec({
@@ -24,15 +27,16 @@ class RepoViewModelTest : DescribeSpec({
 
     describe("fetchRepos") {
         context("ユーザー名が空文字の場合") {
-            it("エラーメッセージが設定される") {
+            it("CancelOnlyエラーが設定される") {
                 runTest(testDispatcher.scheduler) {
                     val viewModel = RepoViewModel(FakeGitHubRepository())
 
                     viewModel.state.test {
                         awaitItem() // 初期状態
                         viewModel.fetchRepos("")
-                        val state = awaitItem()
-                        state.errorMessage shouldBe "ユーザー名が入力されていません"
+                        val error =
+                            awaitItem().errorMessage.shouldBeInstanceOf<ErrorMessage.CancelOnly>()
+                        error.message shouldBe MR.strings.please_enter_username.desc()
                         cancelAndIgnoreRemainingEvents()
                     }
                 }
@@ -58,7 +62,8 @@ class RepoViewModelTest : DescribeSpec({
         context("リポジトリ取得に成功した場合") {
             it("ローディング表示を行うこと") {
                 runTest(testDispatcher.scheduler) {
-                    val viewModel = RepoViewModel(FakeGitHubRepository(Result.success(SAMPLE_REPOS)))
+                    val viewModel =
+                        RepoViewModel(FakeGitHubRepository(Result.success(SAMPLE_REPOS)))
 
                     viewModel.state.test {
                         awaitItem().isLoading shouldBe false // 初期状態
@@ -72,7 +77,8 @@ class RepoViewModelTest : DescribeSpec({
 
             it("リポジトリ一覧が設定される") {
                 runTest(testDispatcher.scheduler) {
-                    val viewModel = RepoViewModel(FakeGitHubRepository(Result.success(SAMPLE_REPOS)))
+                    val viewModel =
+                        RepoViewModel(FakeGitHubRepository(Result.success(SAMPLE_REPOS)))
 
                     viewModel.state.test {
                         awaitItem() // 初期状態
@@ -88,7 +94,7 @@ class RepoViewModelTest : DescribeSpec({
         }
 
         context("リポジトリ取得に失敗した場合") {
-            it("エラーメッセージが設定される") {
+            it("CanRetryエラーが設定される") {
                 runTest(testDispatcher.scheduler) {
                     val viewModel = RepoViewModel(
                         FakeGitHubRepository(Result.failure(Exception("ネットワークエラー")))
@@ -99,7 +105,8 @@ class RepoViewModelTest : DescribeSpec({
                         viewModel.fetchRepos("quesera2")
                         awaitItem() // ローディング中
                         val state = awaitItem()
-                        state.errorMessage shouldBe "ネットワークエラー"
+                        val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry>()
+                        error.message shouldBe "ネットワークエラー".desc()
                         state.isLoading shouldBe false
                         cancelAndIgnoreRemainingEvents()
                     }
@@ -123,7 +130,7 @@ class RepoViewModelTest : DescribeSpec({
                     viewModel.onErrorDismissed()
                     val state = awaitItem()
                     state.isError shouldBe false
-                    state.errorMessage shouldBe ""
+                    state.errorMessage shouldBe null
                     cancelAndIgnoreRemainingEvents()
                 }
             }

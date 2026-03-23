@@ -2,11 +2,13 @@ package que.sera.sera.githubbrowser2
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.icerock.moko.resources.desc.desc
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import que.sera.sera.githubbrowser2.feature.repoview.MR
 
 @Inject
 class RepoViewModel(
@@ -18,7 +20,9 @@ class RepoViewModel(
 
     fun fetchRepos(username: String) {
         if (username.isEmpty()) {
-            state.update { it.failure("ユーザー名が入力されていません") }
+            state.update {
+                it.failure(ErrorMessage.CancelOnly(MR.strings.please_enter_username.desc()))
+            }
             return
         }
 
@@ -28,7 +32,14 @@ class RepoViewModel(
                 val repos = repository.fetchRepos(username)
                 state.update { it.success(repos) }
             } catch (e: Exception) {
-                state.update { it.failure(e.message ?: "Unknown error") }
+                val message = e.message?.desc() ?: MR.strings.unknown_error.desc()
+                state.update {
+                    it.failure(
+                        ErrorMessage.CanRetry(
+                            message = message,
+                            retryAction = { fetchRepos(username) })
+                    )
+                }
             }
         }
     }
