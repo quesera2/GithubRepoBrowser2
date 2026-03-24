@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.metro)
 }
@@ -36,10 +35,10 @@ dependencies {
     implementation(libs.metro.runtime)
     implementation(libs.metro.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.compose.bom))
     implementation(libs.compose.runtime)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
-    implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.ui)
     implementation(libs.compose.uiToolingPreview)
     implementation(libs.androidx.lifecycle.viewmodelCompose)
