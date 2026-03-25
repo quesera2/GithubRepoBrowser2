@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.metro)
 }
 
@@ -30,12 +31,17 @@ kotlin {
 
 dependencies {
     implementation(projects.shared)
+    implementation(projects.feature.common)
+    implementation(projects.feature.resources)
     implementation(projects.feature.repoview)
+    implementation(projects.feature.trending)
     implementation(projects.domain.model)
     implementation(libs.metro.runtime)
     implementation(libs.metro.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.compose.bom))
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
     implementation(libs.compose.runtime)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)

@@ -11,25 +11,18 @@ import kotlinx.coroutines.launch
 import que.sera.sera.githubbrowser2.MR
 
 @Inject
-class RepoViewModel(
+class TrendViewModel(
     private val repository: GitHubRepository
 ) : ViewModel() {
 
-    val state: StateFlow<RepoViewState>
-        field = MutableStateFlow(RepoViewState())
+    val state: StateFlow<TrendViewState>
+        field = MutableStateFlow(TrendViewState())
 
-    fun fetchRepos(username: String) {
-        if (username.isEmpty()) {
-            state.update {
-                it.failure(ErrorMessage.CancelOnly(MR.strings.please_enter_username.desc()))
-            }
-            return
-        }
-
+    fun fetchTrending() {
         viewModelScope.launch {
             state.update { it.loading() }
             try {
-                val repos = repository.fetchRepos(username)
+                val repos = repository.fetchTrendingRepos()
                 state.update { it.success(repos) }
             } catch (e: Exception) {
                 val message = e.message?.desc() ?: MR.strings.unknown_error.desc()
@@ -37,7 +30,7 @@ class RepoViewModel(
                     it.failure(
                         ErrorMessage.CanRetry(
                             message = message,
-                            retryAction = { fetchRepos(username) })
+                            retryAction = { fetchTrending() })
                     )
                 }
             }

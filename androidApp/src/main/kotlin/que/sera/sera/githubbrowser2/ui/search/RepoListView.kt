@@ -1,4 +1,4 @@
-package que.sera.sera.githubbrowser2.ui.repository
+package que.sera.sera.githubbrowser2.ui.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -7,13 +7,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -32,9 +30,10 @@ import que.sera.sera.githubbrowser2.languageColor
 
 @Composable
 internal fun RepoListViewItem(
-    repo: GitHubRepo
+    repo: GitHubRepo,
+    modifier: Modifier = Modifier,
 ) = Column(
-    modifier = Modifier
+    modifier = modifier
         .fillMaxWidth()
         .padding(horizontal = 16.dp, vertical = 12.dp)
         .minimumInteractiveComponentSize(),

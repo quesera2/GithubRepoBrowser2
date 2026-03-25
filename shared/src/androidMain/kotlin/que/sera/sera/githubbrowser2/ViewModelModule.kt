@@ -13,4 +13,9 @@ actual interface ViewModelModule {
     @IntoMap
     @ViewModelKey(RepoViewModel::class)
     fun provideHomeViewModel(viewModel: RepoViewModel): ViewModel = viewModel
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(TrendViewModel::class)
+    fun provideTrendViewModel(viewModel: TrendViewModel): ViewModel = viewModel
 }

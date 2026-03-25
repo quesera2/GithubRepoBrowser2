@@ -6,7 +6,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
 import que.sera.sera.githubbrowser2.AndroidApp
-import que.sera.sera.githubbrowser2.ui.repository.RepositoryViewScreen
+import que.sera.sera.githubbrowser2.ui.navigation.AppNavigation
 import que.sera.sera.githubbrowser2.ui.theme.GitHubBrowserTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -16,7 +16,7 @@ fun App() {
     val viewModelFactory = application.graph.metroViewModelFactory
     GitHubBrowserTheme {
         CompositionLocalProvider(LocalMetroViewModelFactory provides viewModelFactory) {
-            RepositoryViewScreen()
-    }
+            AppNavigation()
+        }
     }
 }

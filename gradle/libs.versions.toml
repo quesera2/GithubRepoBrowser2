@@ -17,6 +17,7 @@ ksp = "2.3.6"
 turbine = "1.2.1"
 metro = "0.11.4"
 mokoResources = "0.26.1"
+androidx-navigation3 = "1.0.1"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
@@ -48,6 +49,8 @@ turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 moko-resources = { module = "dev.icerock.moko:resources", version.ref = "mokoResources" }
 moko-resources-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "mokoResources" }
 moko-resources-generator = { module = "dev.icerock.moko:resources-generator", version.ref = "mokoResources" }
+androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "androidx-navigation3" }
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "androidx-navigation3" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
