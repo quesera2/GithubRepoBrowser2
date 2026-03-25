@@ -32,16 +32,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavKey
 import dev.icerock.moko.resources.compose.localized
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.desc
 import dev.zacsweers.metrox.viewmodel.metroViewModel
+import kotlinx.serialization.Serializable
 import que.sera.sera.githubbrowser2.ErrorMessage
 import que.sera.sera.githubbrowser2.GitHubRepo
 import que.sera.sera.githubbrowser2.TrendViewModel
 import que.sera.sera.githubbrowser2.TrendViewState
 import que.sera.sera.githubbrowser2.feature.trending.MR
-import que.sera.sera.githubbrowser2.ui.repository.RepoListViewItem
+import que.sera.sera.githubbrowser2.ui.search.RepoListViewItem
+
+@Serializable
+data object RouteTrend : NavKey
 
 @Composable
 fun TrendScreen(

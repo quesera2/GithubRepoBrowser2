@@ -1,4 +1,4 @@
-package que.sera.sera.githubbrowser2.ui.repository
+package que.sera.sera.githubbrowser2.ui.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -43,10 +43,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavKey
 import dev.icerock.moko.resources.compose.localized
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.desc
 import dev.zacsweers.metrox.viewmodel.metroViewModel
+import kotlinx.serialization.Serializable
 import que.sera.sera.githubbrowser2.ErrorMessage
 import que.sera.sera.githubbrowser2.GitHubRepo
 import que.sera.sera.githubbrowser2.R
@@ -54,12 +56,15 @@ import que.sera.sera.githubbrowser2.RepoViewModel
 import que.sera.sera.githubbrowser2.RepoViewState
 import que.sera.sera.githubbrowser2.feature.repoview.MR
 
+@Serializable
+data object RouteSearch : NavKey
+
 @Composable
-fun RepositoryViewScreen(
+fun SearchScreen(
     viewModel: RepoViewModel = metroViewModel()
 ) {
     val uiState by viewModel.state.collectAsState()
-    RepositoryViewContent(
+    SearchContent(
         uiState = uiState,
         onSearch = { viewModel.fetchRepos(it) },
         onDismissErrorDialog = { viewModel.onErrorDismissed() },
@@ -68,7 +73,7 @@ fun RepositoryViewScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun RepositoryViewContent(
+private fun SearchContent(
     uiState: RepoViewState,
     onSearch: (String) -> Unit,
     onDismissErrorDialog: () -> Unit,
@@ -260,11 +265,11 @@ private fun EmptyView() {
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewRepositoryView(
+private fun PreviewSearch(
     @PreviewParameter(RepoViewStateProvider::class) uiState: RepoViewState
 ) {
     MaterialTheme {
-        RepositoryViewContent(
+        SearchContent(
             uiState = uiState,
             onSearch = {},
             onDismissErrorDialog = {}
