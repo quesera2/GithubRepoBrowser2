@@ -8,18 +8,16 @@ struct iOSApp: App {
         let graph = AppGraphKt.createGraph()
         WindowGroup {
             TabView {
-                NavigationStack {
-                    TrendView()
-                }
-                .tabItem {
-                    Label("Trending", systemImage: "chart.line.uptrend.xyaxis")
+                Tab("Trending", image: "icon_trend") {
+                    NavigationStack {
+                        TrendView()
+                    }
                 }
 
-                NavigationStack {
-                    RepositoryView()
-                }
-                .tabItem {
-                    Label("Search", systemImage: "magnifyingglass")
+                Tab(role: .search) {
+                    NavigationStack {
+                        RepositoryView()
+                    }
                 }
             }
             .environment(\.repoViewModel, graph.repoViewModel)

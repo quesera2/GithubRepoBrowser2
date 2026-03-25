@@ -54,7 +54,6 @@ struct GitHubRepositoryCell: View {
     private func detailLabel(_ image: SwiftUI.ImageResource, label: String) -> some View {
         HStack(spacing: 4) {
             Image(image)
-                .renderingMode(.template)
                 .foregroundStyle(Color.themeAccent)
             
             Text(label)

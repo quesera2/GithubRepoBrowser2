@@ -132,7 +132,6 @@ struct RepositoryViewContent: View {
     private var emptyView: some View {
         VStack(spacing: 16) {
             Image(.iconSearch)
-                .renderingMode(.template)
                 .resizable()
                 .frame(width: 44, height: 44)
                 .foregroundStyle(Color.themePlaceholder)
