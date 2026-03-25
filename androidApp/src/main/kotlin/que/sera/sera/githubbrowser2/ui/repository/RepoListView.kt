@@ -32,9 +32,10 @@ import que.sera.sera.githubbrowser2.languageColor
 
 @Composable
 internal fun RepoListViewItem(
-    repo: GitHubRepo
+    repo: GitHubRepo,
+    modifier: Modifier = Modifier,
 ) = Column(
-    modifier = Modifier
+    modifier = modifier
         .fillMaxWidth()
         .padding(horizontal = 16.dp, vertical = 12.dp)
         .minimumInteractiveComponentSize(),

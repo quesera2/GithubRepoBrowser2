@@ -11,7 +11,7 @@ plugins {
 
 kotlin {
     androidLibrary {
-        namespace = "que.sera.sera.githubbrowser2.feature.repoview"
+        namespace = "que.sera.sera.githubbrowser2.feature.trending"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
         compilerOptions { jvmTarget.set(JvmTarget.JVM_11) }
@@ -49,5 +49,5 @@ kotlin {
 }
 
 multiplatformResources {
-    resourcesPackage.set("que.sera.sera.githubbrowser2.feature.repoview")
+    resourcesPackage.set("que.sera.sera.githubbrowser2.feature.trending")
 }

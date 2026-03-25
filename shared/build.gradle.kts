@@ -23,7 +23,9 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
+            export(projects.feature.common)
             export(projects.feature.repoview)
+            export(projects.feature.trending)
             export(projects.domain.model)
             export(projects.domain.contract)
             export(libs.moko.resources)
@@ -41,7 +43,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.feature.common)
             implementation(projects.feature.repoview)
+            implementation(projects.feature.trending)
             implementation(projects.data.repository)
             implementation(projects.data.api)
             implementation(projects.domain.contract)
@@ -53,7 +57,9 @@ kotlin {
             implementation(libs.metro.viewmodel)
         }
         iosMain.dependencies {
+            api(projects.feature.common)
             api(projects.feature.repoview)
+            api(projects.feature.trending)
             api(projects.domain.model)
             api(projects.domain.contract)
             api(libs.moko.resources)

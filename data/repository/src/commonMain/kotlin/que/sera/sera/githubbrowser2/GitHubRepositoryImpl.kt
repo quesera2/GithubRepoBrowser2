@@ -5,4 +5,7 @@ class GitHubRepositoryImpl(
 ) : GitHubRepository {
     override suspend fun fetchRepos(username: String): List<GitHubRepo> =
         api.fetchRepos(username)
+
+    override suspend fun fetchTrendingRepos(): List<GitHubRepo> =
+        api.fetchTrendingRepos().items
 }
