@@ -104,11 +104,11 @@ struct TrendRepositoryCell: View {
     let repo: GitHubRepo
 
     var body: some View {
-        HStack(alignment: .top, spacing: 0) {
+        HStack(alignment: .center, spacing: 0) {
             Text("#\(rank)")
                 .font(.system(size: 16, weight: .bold))
                 .foregroundStyle(Color.themeAccent)
-                .frame(width: 40, alignment: .leading)
+                .frame(width: 40, alignment: .center)
 
             GitHubRepositoryCell(repo: repo)
         }
