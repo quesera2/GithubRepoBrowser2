@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -24,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -44,7 +42,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
-import dev.icerock.moko.resources.compose.localized
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.desc
 import dev.zacsweers.metrox.viewmodel.metroViewModel
@@ -54,7 +51,8 @@ import que.sera.sera.githubbrowser2.GitHubRepo
 import que.sera.sera.githubbrowser2.R
 import que.sera.sera.githubbrowser2.RepoViewModel
 import que.sera.sera.githubbrowser2.RepoViewState
-import que.sera.sera.githubbrowser2.feature.repoview.MR
+import que.sera.sera.githubbrowser2.MR
+import que.sera.sera.githubbrowser2.ui.component.ErrorDialog
 
 @Serializable
 data object RouteSearch : NavKey
@@ -169,32 +167,6 @@ private fun SearchContent(
                 ErrorDialog(errorMessage = errorMessage, onDismiss = onDismissErrorDialog)
             }
         }
-    }
-}
-
-@Composable
-private fun ErrorDialog(
-    errorMessage: ErrorMessage,
-    onDismiss: () -> Unit,
-) {
-    val message = errorMessage.message.localized()
-    when (errorMessage) {
-        is ErrorMessage.CanRetry -> AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(stringResource(MR.strings.error_title)) },
-            text = { Text(message) },
-            confirmButton = {
-                TextButton(onClick = errorMessage.retryAction) { Text(stringResource(MR.strings.retry_button)) }
-            },
-            dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(MR.strings.close_button)) } },
-        )
-
-        is ErrorMessage.CancelOnly -> AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(stringResource(MR.strings.error_title)) },
-            text = { Text(message) },
-            confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(MR.strings.close_button)) } },
-        )
     }
 }
 

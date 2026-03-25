@@ -31,11 +31,11 @@ struct TrendViewContent: View {
 
     var body: some View {
         content
-            .alert("Error", isPresented: state.isError.toReadOnlyBindable()) {
+            .alert(.stringResource(\.error_title), isPresented: state.isError.toReadOnlyBindable()) {
                 if let e = state.errorMessage as? ErrorMessage.CanRetry {
-                    Button("Retry") { e.retryAction() }
+                    Button(.stringResource(\.retry_button)) { e.retryAction() }
                 }
-                Button("Close", role: .cancel) { onDismissError() }
+                Button(.stringResource(\.close_button), role: .cancel) { onDismissError() }
             } message: {
                 Text(verbatim: state.errorMessage?.message.localized() ?? "")
             }
@@ -59,7 +59,7 @@ struct TrendViewContent: View {
                     sectionHeader
                         .padding(.horizontal)
                     Spacer()
-                    Text("No trending repositories found")
+                    Text(\.no_trending_repositories_found)
                         .font(.system(size: 15, weight: .regular))
                         .foregroundStyle(Color.themeSecondary)
                     Spacer()
@@ -91,7 +91,7 @@ struct TrendViewContent: View {
 
     @ViewBuilder
     private var sectionHeader: some View {
-        Text("Trending")
+        Text(\.trending_title)
             .font(.system(size: 35, weight: .bold))
             .foregroundStyle(Color.themePrimary)
             .padding(.top, 20)

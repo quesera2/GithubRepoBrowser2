@@ -10,14 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -33,7 +31,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
-import dev.icerock.moko.resources.compose.localized
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.desc
 import dev.zacsweers.metrox.viewmodel.metroViewModel
@@ -42,7 +39,8 @@ import que.sera.sera.githubbrowser2.ErrorMessage
 import que.sera.sera.githubbrowser2.GitHubRepo
 import que.sera.sera.githubbrowser2.TrendViewModel
 import que.sera.sera.githubbrowser2.TrendViewState
-import que.sera.sera.githubbrowser2.feature.trending.MR
+import que.sera.sera.githubbrowser2.MR
+import que.sera.sera.githubbrowser2.ui.component.ErrorDialog
 import que.sera.sera.githubbrowser2.ui.search.RepoListViewItem
 
 @Serializable
@@ -56,7 +54,6 @@ fun TrendScreen(
     LaunchedEffect(Unit) { viewModel.fetchTrending() }
     TrendContent(
         uiState = uiState,
-        onRetry = { viewModel.fetchTrending() },
         onDismissErrorDialog = { viewModel.onErrorDismissed() },
     )
 }
@@ -65,7 +62,6 @@ fun TrendScreen(
 @Composable
 private fun TrendContent(
     uiState: TrendViewState,
-    onRetry: () -> Unit,
     onDismissErrorDialog: () -> Unit,
 ) {
     Scaffold(
@@ -95,7 +91,7 @@ private fun TrendContent(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No trending repositories found",
+                            text = stringResource(MR.strings.no_trending_repositories_found),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -130,9 +126,8 @@ private fun TrendContent(
             )
 
             uiState.errorMessage?.let { errorMessage ->
-                TrendErrorDialog(
+                ErrorDialog(
                     errorMessage = errorMessage,
-                    onRetry = onRetry,
                     onDismiss = onDismissErrorDialog,
                 )
             }
@@ -158,44 +153,13 @@ private fun TrendListViewItem(rank: Int, repo: GitHubRepo) {
     }
 }
 
-@Composable
-private fun TrendErrorDialog(
-    errorMessage: ErrorMessage,
-    onRetry: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val message = errorMessage.message.localized()
-    when (errorMessage) {
-        is ErrorMessage.CanRetry -> AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(stringResource(MR.strings.error_title)) },
-            text = { Text(message) },
-            confirmButton = {
-                TextButton(onClick = onRetry) { Text(stringResource(MR.strings.retry_button)) }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) { Text(stringResource(MR.strings.close_button)) }
-            },
-        )
-
-        is ErrorMessage.CancelOnly -> AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(stringResource(MR.strings.error_title)) },
-            text = { Text(message) },
-            confirmButton = {
-                TextButton(onClick = onDismiss) { Text(stringResource(MR.strings.close_button)) }
-            },
-        )
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun PreviewTrendScreen(
     @PreviewParameter(TrendViewStateProvider::class) uiState: TrendViewState
 ) {
     MaterialTheme {
-        TrendContent(uiState = uiState, onRetry = {}, onDismissErrorDialog = {})
+        TrendContent(uiState = uiState, onDismissErrorDialog = {})
     }
 }
 

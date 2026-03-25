@@ -16,6 +16,7 @@ import androidx.navigation3.ui.NavDisplay
 import dev.icerock.moko.resources.compose.localized
 import dev.icerock.moko.resources.desc.desc
 import que.sera.sera.githubbrowser2.R
+import que.sera.sera.githubbrowser2.MR
 import que.sera.sera.githubbrowser2.ui.search.RouteSearch
 import que.sera.sera.githubbrowser2.ui.search.SearchScreen
 import que.sera.sera.githubbrowser2.ui.trend.RouteTrend
@@ -24,11 +25,11 @@ import que.sera.sera.githubbrowser2.ui.trend.TrendScreen
 private val TOP_LEVEL_ROUTES = mapOf(
     RouteTrend to NavBarItem(
         icon = R.drawable.icon_trend,
-        description = que.sera.sera.githubbrowser2.feature.trending.MR.strings.trending_title.desc()
+        description = MR.strings.trending_title.desc()
     ),
     RouteSearch to NavBarItem(
         icon = R.drawable.icon_search,
-        description = que.sera.sera.githubbrowser2.feature.repoview.MR.strings.search_title.desc()
+        description = MR.strings.search_title.desc()
     ),
 )
 

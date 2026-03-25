@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resources>
-    <string name="trending_title">Trending</string>
-    <string name="error_title">Error</string>
-    <string name="retry_button">Retry</string>
-    <string name="close_button">Close</string>
-    <string name="unknown_error">Unknown error</string>
-</resources>

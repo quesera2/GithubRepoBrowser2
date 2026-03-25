@@ -24,6 +24,7 @@ kotlin {
             baseName = "Shared"
             isStatic = true
             export(projects.feature.common)
+            export(projects.feature.resources)
             export(projects.feature.repoview)
             export(projects.feature.trending)
             export(projects.domain.model)
@@ -44,6 +45,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.feature.common)
+            implementation(projects.feature.resources)
             implementation(projects.feature.repoview)
             implementation(projects.feature.trending)
             implementation(projects.data.repository)
@@ -58,6 +60,7 @@ kotlin {
         }
         iosMain.dependencies {
             api(projects.feature.common)
+            api(projects.feature.resources)
             api(projects.feature.repoview)
             api(projects.feature.trending)
             api(projects.domain.model)

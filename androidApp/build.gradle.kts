@@ -32,6 +32,7 @@ kotlin {
 dependencies {
     implementation(projects.shared)
     implementation(projects.feature.common)
+    implementation(projects.feature.resources)
     implementation(projects.feature.repoview)
     implementation(projects.feature.trending)
     implementation(projects.domain.model)

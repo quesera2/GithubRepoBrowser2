@@ -11,7 +11,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import que.sera.sera.githubbrowser2.feature.repoview.MR
+import que.sera.sera.githubbrowser2.MR
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RepoViewModelTest : DescribeSpec({
