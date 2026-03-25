@@ -1,6 +1,5 @@
 package que.sera.sera.githubbrowser2.ui.navigation
 
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -42,12 +41,14 @@ fun AppNavigation() {
 
     val navigator = remember { Navigator(navigationState) }
 
-    val entryProvider = entryProvider {
-        entry<RouteTrend> {
-            TrendScreen()
-        }
-        entry<RouteSearch> {
-            SearchScreen()
+    val entryProvider = remember {
+        entryProvider {
+            entry<RouteTrend> {
+                TrendScreen()
+            }
+            entry<RouteSearch> {
+                SearchScreen()
+            }
         }
     }
 
@@ -56,16 +57,17 @@ fun AppNavigation() {
             NavigationBar {
                 TOP_LEVEL_ROUTES.forEach { (key, value) ->
                     val isSelected = key == navigationState.topLevelRoute
+                    val description = value.description.localized()
                     NavigationBarItem(
                         selected = isSelected,
                         onClick = { navigator.navigate(key) },
                         icon = {
                             Icon(
                                 painter = painterResource(value.icon),
-                                contentDescription = value.description.localized()
+                                contentDescription = description
                             )
                         },
-                        label = { Text(value.description.localized()) }
+                        label = { Text(description) }
                     )
                 }
             }
