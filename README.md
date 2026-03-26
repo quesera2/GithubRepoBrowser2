@@ -54,8 +54,12 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 
 ### iOS
 
-```shell
-./gradlew :shared:embedAndSignAppleFrameworkForXcode
-```
+`iosApp/iosApp.xcodeproj` を Xcode で開いて Run。
 
-または `iosApp/iosApp.xcodeproj` を Xcode で開いて Run。
+#### 初回設定
+
+Xcodeが使う Java が 21 となるようにする必要があります。必要に応じて `iosApp/.xcode.env.local` を作成してください。
+
+```shell:.xcode.env.local
+export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+```
