@@ -163,7 +163,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+			shellScript = "[ -f \"$SRCROOT/.xcode.env.local\" ] && source \"$SRCROOT/.xcode.env.local\"\nif [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
 		};
 		FBD9CBF92F70DDC100361AD0 /* Copy Moko Resource */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -182,7 +182,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "TASK=\"copyResources${KOTLIN_FRAMEWORK_BUILD_TYPE:-$CONFIGURATION}FrameworkIos${ARCHS}\"\n\n  \"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" \":shared:$TASK\" \\\n      -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n      -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\"\n";
+			shellScript = "[ -f \"$SRCROOT/.xcode.env.local\" ] && source \"$SRCROOT/.xcode.env.local\"\nTASK=\"copyResources${KOTLIN_FRAMEWORK_BUILD_TYPE:-$CONFIGURATION}FrameworkIos${ARCHS}\"\n\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" \":shared:$TASK\" \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
