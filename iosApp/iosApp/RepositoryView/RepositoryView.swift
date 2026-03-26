@@ -50,14 +50,7 @@ struct RepositoryViewContent: View {
                 onSearch(searchText)
                 isSearchPresented = false
             }
-            .alert(.stringResource(\.error_title), isPresented: state.isError.toReadOnlyBindable()) {
-                if let e = state.errorMessage as? ErrorMessage.CanRetry {
-                    Button(.stringResource(\.retry_button)) { e.retryAction() }
-                }
-                Button(.stringResource(\.close_button), role: .cancel) { onDismissError() }
-            } message: {
-                Text(verbatim: state.errorMessage?.message.localized() ?? "")
-            }
+            .errorAlert(errorMessage: state.errorMessage, onDismissError: onDismissError)
     }
     
     @ViewBuilder
