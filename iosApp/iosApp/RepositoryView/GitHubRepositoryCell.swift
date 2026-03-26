@@ -31,9 +31,9 @@ struct GitHubRepositoryCell: View {
                         }
                     }
 
-                    detailLabel(.iconStar, label: "\(repo.stars)")
+                    detailLabel(.iconStar, label: repo.stars.formatCount().localized())
 
-                    detailLabel(.iconFork, label: "\(repo.forks)")
+                    detailLabel(.iconFork, label: repo.forks.formatCount().localized())
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

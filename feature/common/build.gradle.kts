@@ -18,6 +18,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.feature.resources)
             implementation(libs.moko.resources)
         }
     }

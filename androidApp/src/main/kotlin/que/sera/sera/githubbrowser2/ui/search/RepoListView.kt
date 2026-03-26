@@ -24,8 +24,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.icerock.moko.resources.compose.localized
 import que.sera.sera.githubbrowser2.GitHubRepo
 import que.sera.sera.githubbrowser2.R
+import que.sera.sera.githubbrowser2.formatCount
 import que.sera.sera.githubbrowser2.languageColor
 
 @Composable
@@ -87,7 +89,7 @@ internal fun RepoListViewItem(
                 modifier = Modifier.size(12.dp)
             )
             Text(
-                text = "${repo.stars}",
+                text = repo.stars.formatCount().localized(),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -103,7 +105,7 @@ internal fun RepoListViewItem(
                 modifier = Modifier.size(12.dp)
             )
             Text(
-                text = "${repo.forks}",
+                text = repo.forks.formatCount().localized(),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
