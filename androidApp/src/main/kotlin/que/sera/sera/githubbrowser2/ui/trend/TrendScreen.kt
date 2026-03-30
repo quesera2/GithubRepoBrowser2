@@ -1,18 +1,20 @@
 package que.sera.sera.githubbrowser2.ui.trend
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,9 +39,9 @@ import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.serialization.Serializable
 import que.sera.sera.githubbrowser2.ErrorMessage
 import que.sera.sera.githubbrowser2.GitHubRepo
+import que.sera.sera.githubbrowser2.MR
 import que.sera.sera.githubbrowser2.TrendViewModel
 import que.sera.sera.githubbrowser2.TrendViewState
-import que.sera.sera.githubbrowser2.MR
 import que.sera.sera.githubbrowser2.ui.component.ErrorDialog
 import que.sera.sera.githubbrowser2.ui.search.RepoListViewItem
 
@@ -99,10 +101,17 @@ private fun TrendContent(
                 }
 
                 else -> {
-                    LazyColumn(contentPadding = innerPadding) {
+                    LazyColumn(
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = innerPadding.calculateTopPadding() + 8.dp,
+                            bottom = innerPadding.calculateBottomPadding() + 8.dp,
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
                         itemsIndexed(repos) { index, repo ->
                             TrendListViewItem(rank = index + 1, repo = repo)
-                            HorizontalDivider()
                         }
                     }
                     if (uiState.isLoading) {
@@ -118,8 +127,8 @@ private fun TrendContent(
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(
-                                MaterialTheme.colorScheme.surface,
-                                MaterialTheme.colorScheme.surface.copy(alpha = 0.4f),
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.4f),
                             )
                         )
                     )
@@ -140,15 +149,26 @@ private fun TrendListViewItem(rank: Int, repo: GitHubRepo) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(
-            text = "#$rank",
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary,
+        Box(
             modifier = Modifier
-                .width(40.dp)
-                .padding(start = 16.dp),
-        )
+                .defaultMinSize(minWidth = 28.dp, minHeight = 22.dp)
+                .background(
+                    color = if (rank <= 3) MaterialTheme.colorScheme.tertiaryContainer
+                    else MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(6.dp),
+                )
+                .padding(horizontal = 6.dp, vertical = 3.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = rank.toString(),
+                style = MaterialTheme.typography.labelSmall,
+                color = if (rank <= 3) MaterialTheme.colorScheme.onTertiaryContainer
+                else MaterialTheme.colorScheme.onPrimary,
+            )
+        }
         RepoListViewItem(repo = repo, modifier = Modifier.weight(1f))
     }
 }
@@ -175,13 +195,19 @@ private class TrendViewStateProvider : PreviewParameterProvider<TrendViewState> 
 }
 
 private val sampleRepos = listOf(
-    GitHubRepo(id = 1, name = "kotlin", fullName = "JetBrains/kotlin",
+    GitHubRepo(
+        id = 1, name = "kotlin", fullName = "JetBrains/kotlin",
         description = "The Kotlin Programming Language", stars = 50000, forks = 6000,
-        language = "Kotlin", htmlUrl = ""),
-    GitHubRepo(id = 2, name = "swift", fullName = "apple/swift",
+        language = "Kotlin", htmlUrl = ""
+    ),
+    GitHubRepo(
+        id = 2, name = "swift", fullName = "apple/swift",
         description = "The Swift Programming Language", stars = 67000, forks = 10000,
-        language = "C++", htmlUrl = ""),
-    GitHubRepo(id = 3, name = "linux", fullName = "torvalds/linux",
+        language = "C++", htmlUrl = ""
+    ),
+    GitHubRepo(
+        id = 3, name = "linux", fullName = "torvalds/linux",
         description = null, stars = 180000, forks = 55000,
-        language = "C", htmlUrl = ""),
+        language = "C", htmlUrl = ""
+    ),
 )

@@ -204,13 +204,17 @@ private fun RepoListContent(
     }
 
     else -> LazyColumn(
-        modifier = modifier
-            .imePadding(),
-        contentPadding = innerPadding,
+        modifier = modifier.imePadding(),
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = innerPadding.calculateTopPadding() + 8.dp,
+            bottom = innerPadding.calculateBottomPadding() + 8.dp,
+        ),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(repos) { repo ->
             RepoListViewItem(repo)
-            HorizontalDivider()
         }
     }
 }

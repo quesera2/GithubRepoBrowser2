@@ -2,29 +2,28 @@ package que.sera.sera.githubbrowser2.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Primary
-val Purple10 = Color(0xFF21005D)
-val Purple20 = Color(0xFF381E72)
-val Purple30 = Color(0xFF4F378B)
-val Purple40 = Color(0xFF6750A4)
-val Purple80 = Color(0xFFD0BCFF)
-val Purple90 = Color(0xFFEADDFF)
+// Primary — Blue
+val Blue10 = Color(0xFF001946)
+val Blue20 = Color(0xFF003272)
+val Blue30 = Color(0xFF1E3A5F)
+val Blue40 = Color(0xFF0550AE)
+val Blue80 = Color(0xFF6CB5FF)
+val Blue90 = Color(0xFFC3D4F6)
 
-// Secondary
-val PurpleGrey10 = Color(0xFF1E192B)
-val PurpleGrey20 = Color(0xFF332D41)
-val PurpleGrey30 = Color(0xFF4A4458)
-val PurpleGrey40 = Color(0xFF625B71)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val PurpleGrey90 = Color(0xFFE8DEF8)
+// Secondary — Slate
+val Slate10 = Color(0xFF1A1D24)
+val Slate20 = Color(0xFF22252E)
+val Slate30 = Color(0xFF44474E)
+val Slate40 = Color(0xFF5F6368)
+val Slate80 = Color(0xFF9498A5)
+val Slate90 = Color(0xFFEFF1F5)
 
-// Tertiary
-val Pink10 = Color(0xFF31111D)
-val Pink20 = Color(0xFF492532)
-val Pink30 = Color(0xFF633B48)
-val Pink40 = Color(0xFF7D5260)
-val Pink80 = Color(0xFFEFB8C8)
-val Pink90 = Color(0xFFFFD8E4)
+// Tertiary — Gold
+val Gold10 = Color(0xFF231A00)
+val Gold20 = Color(0xFF3A2D00)
+val Gold30 = Color(0xFF5C4A12)
+val Gold40 = Color(0xFFD4A72C)
+val Gold80 = Color(0xFFF0C940)
 
 // Error
 val Red10 = Color(0xFF410E0B)
@@ -35,17 +34,16 @@ val Red80 = Color(0xFFF2B8B5)
 val Red90 = Color(0xFFF9DEDC)
 
 // Neutral
-val Grey10 = Color(0xFF1C1B1F)
-val Grey20 = Color(0xFF313033)
-val Grey90 = Color(0xFFE6E1E5)
-val Grey95 = Color(0xFFF4EFF4)
-val Grey99 = Color(0xFFFFFBFE)
+val Ink10 = Color(0xFF1B1B1F)
+val Ink20 = Color(0xFF1C1F26)
+val Ink90 = Color(0xFFE3E3E8)
+val Ink95 = Color(0xFFF2F4F8)
+val Ink99 = Color(0xFFFFFFFF)
 
 // Neutral Variant
-val BlueGrey10 = Color(0xFF1D1A22)
-val BlueGrey20 = Color(0xFF322F37)
-val BlueGrey30 = Color(0xFF49454F)
-val BlueGrey40 = Color(0xFF605D66)
-val BlueGrey60 = Color(0xFF79747E)
-val BlueGrey80 = Color(0xFFCAC4D0)
-val BlueGrey90 = Color(0xFFE7E0EC)
+val InkVar10 = Color(0xFF111318)
+val InkVar20 = Color(0xFF2C303A)
+val InkVar30 = Color(0xFF44474E)
+val InkVar60 = Color(0xFFB0B8C4)
+val InkVar80 = Color(0xFFE2E5EC)
+val InkVar90 = Color(0xFFE4E7EF)
