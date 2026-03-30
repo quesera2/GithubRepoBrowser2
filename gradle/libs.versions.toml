@@ -15,7 +15,7 @@ skie = "0.10.10"
 kotest = "6.1.9"
 ksp = "2.3.6"
 turbine = "1.2.1"
-metro = "0.12.0"
+metro = "0.12.1"
 mokoResources = "0.26.1"
 androidx-navigation3 = "1.0.1"
 
