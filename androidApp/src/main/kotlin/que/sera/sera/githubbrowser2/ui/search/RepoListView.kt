@@ -6,21 +6,32 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.compose.localized
@@ -28,27 +39,53 @@ import que.sera.sera.githubbrowser2.GitHubRepo
 import que.sera.sera.githubbrowser2.R
 import que.sera.sera.githubbrowser2.formatCount
 import que.sera.sera.githubbrowser2.languageColor
-import androidx.compose.material3.Icon
 import que.sera.sera.githubbrowser2.ui.theme.GitHubBrowserTheme
 
 @Composable
 internal fun RepoListViewItem(
     repo: GitHubRepo,
     modifier: Modifier = Modifier,
+    rank: Int? = null,
 ) {
     OutlinedCard(
         modifier = modifier.minimumInteractiveComponentSize(),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(
-                text = repo.fullName,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (rank != null) {
+                    RankBox(rank)
+
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(SpanStyle(color = MaterialTheme.colorScheme.secondary)) {
+                            append(repo.fullName.substringBefore('/'))
+                        }
+                        withStyle(SpanStyle(color = MaterialTheme.colorScheme.outline)) {
+                            append("/")
+                        }
+                        withStyle(
+                            SpanStyle(
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        ) {
+                            append(repo.name)
+                        }
+                    },
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
 
             repo.description?.let {
                 Text(
@@ -64,57 +101,88 @@ internal fun RepoListViewItem(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 repo.language?.let { lang ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .clip(CircleShape)
-                                .background(Color(languageColor(repo.language)), CircleShape)
+                    MetaChip(
+                        icon = {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(languageColor(lang)), CircleShape)
+                            )
+                        },
+                        text = { Text(text = lang) }
+                    )
+                }
+
+                MetaChip(
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.icon_star),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.tertiary,
+                            modifier = Modifier.size(10.dp)
                         )
-                        Text(
-                            text = lang,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                    text = { Text(text = repo.stars.formatCount().localized()) }
+                )
+
+                MetaChip(
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.icon_fork),
+                            contentDescription = null,
+                            modifier = Modifier.size(10.dp)
                         )
-                    }
-                }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.icon_star),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.size(12.dp)
-                    )
-                    Text(
-                        text = repo.stars.formatCount().localized(),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.tertiary,
-                    )
-                }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.icon_fork),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(12.dp)
-                    )
-                    Text(
-                        text = repo.forks.formatCount().localized(),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                Spacer(Modifier.weight(1f))
+                    },
+                    text = { Text(text = repo.forks.formatCount().localized()) }
+                )
             }
+        }
+    }
+}
+
+@Composable
+private fun RankBox(rank: Int) {
+    val (boxColor, textColor) = with(MaterialTheme.colorScheme) {
+        if (rank <= 3) {
+            tertiaryContainer to onTertiaryContainer
+        } else {
+            primary to onPrimary
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .defaultMinSize(minWidth = 28.dp, minHeight = 22.dp)
+            .background(
+                color = boxColor,
+                shape = RoundedCornerShape(6.dp),
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = rank.toString(),
+            style = MaterialTheme.typography.labelSmall,
+            color = textColor
+        )
+    }
+}
+
+@Composable
+private fun MetaChip(
+    icon: @Composable () -> Unit,
+    text: @Composable () -> Unit,
+) = Row(
+    modifier = Modifier
+        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(6.dp))
+        .padding(horizontal = 8.dp, vertical = 4.dp),
+    horizontalArrangement = Arrangement.spacedBy(4.dp),
+    verticalAlignment = Alignment.CenterVertically,
+) {
+    CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
+        ProvideTextStyle(MaterialTheme.typography.labelSmall) {
+            icon()
+            text()
         }
     }
 }
@@ -134,6 +202,33 @@ private fun PreviewRepoListViewItem() {
                     id = 1,
                     name = "kotlin",
                     fullName = "JetBrains/kotlin",
+                    description = "The Kotlin Programming Language The Kotlin Programming Language The Kotlin Programming Language",
+                    stars = 50000,
+                    forks = 6000,
+                    language = "Kotlin",
+                    htmlUrl = "",
+                )
+            )
+
+            RepoListViewItem(
+                repo = GitHubRepo(
+                    id = 2,
+                    name = "dotfiles",
+                    fullName = "user/dotfiles",
+                    description = null,
+                    stars = 0,
+                    forks = 0,
+                    language = null,
+                    htmlUrl = "",
+                )
+            )
+
+            RepoListViewItem(
+                rank = 1,
+                repo = GitHubRepo(
+                    id = 1,
+                    name = "kotlin",
+                    fullName = "JetBrains/kotlin",
                     description = "The Kotlin Programming Language",
                     stars = 50000,
                     forks = 6000,
@@ -143,6 +238,7 @@ private fun PreviewRepoListViewItem() {
             )
 
             RepoListViewItem(
+                rank = 4,
                 repo = GitHubRepo(
                     id = 2,
                     name = "dotfiles",

@@ -4,15 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -44,6 +42,7 @@ import que.sera.sera.githubbrowser2.TrendViewModel
 import que.sera.sera.githubbrowser2.TrendViewState
 import que.sera.sera.githubbrowser2.ui.component.ErrorDialog
 import que.sera.sera.githubbrowser2.ui.search.RepoListViewItem
+import que.sera.sera.githubbrowser2.ui.theme.GitHubBrowserTheme
 
 @Serializable
 data object RouteTrend : NavKey
@@ -69,10 +68,15 @@ private fun TrendContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(MR.strings.trending_title)) },
+                title = {
+                    Text(
+                        text = stringResource(MR.strings.trending_title),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent
-                )
+                ),
             )
         }
     ) { innerPadding ->
@@ -111,7 +115,7 @@ private fun TrendContent(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         itemsIndexed(repos) { index, repo ->
-                            TrendListViewItem(rank = index + 1, repo = repo)
+                            RepoListViewItem(repo = repo, rank = index + 1)
                         }
                     }
                     if (uiState.isLoading) {
@@ -144,41 +148,13 @@ private fun TrendContent(
     }
 }
 
-@Composable
-private fun TrendListViewItem(rank: Int, repo: GitHubRepo) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .defaultMinSize(minWidth = 28.dp, minHeight = 22.dp)
-                .background(
-                    color = if (rank <= 3) MaterialTheme.colorScheme.tertiaryContainer
-                    else MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(6.dp),
-                )
-                .padding(horizontal = 6.dp, vertical = 3.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = rank.toString(),
-                style = MaterialTheme.typography.labelSmall,
-                color = if (rank <= 3) MaterialTheme.colorScheme.onTertiaryContainer
-                else MaterialTheme.colorScheme.onPrimary,
-            )
-        }
-        RepoListViewItem(repo = repo, modifier = Modifier.weight(1f))
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
 private fun PreviewTrendScreen(
     @PreviewParameter(TrendViewStateProvider::class) uiState: TrendViewState
 ) {
-    MaterialTheme {
+    GitHubBrowserTheme {
         TrendContent(uiState = uiState, onDismissErrorDialog = {})
     }
 }
