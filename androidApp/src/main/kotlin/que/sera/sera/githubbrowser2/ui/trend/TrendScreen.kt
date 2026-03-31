@@ -1,18 +1,17 @@
 package que.sera.sera.githubbrowser2.ui.trend
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -37,11 +37,12 @@ import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.serialization.Serializable
 import que.sera.sera.githubbrowser2.ErrorMessage
 import que.sera.sera.githubbrowser2.GitHubRepo
+import que.sera.sera.githubbrowser2.MR
 import que.sera.sera.githubbrowser2.TrendViewModel
 import que.sera.sera.githubbrowser2.TrendViewState
-import que.sera.sera.githubbrowser2.MR
 import que.sera.sera.githubbrowser2.ui.component.ErrorDialog
-import que.sera.sera.githubbrowser2.ui.search.RepoListViewItem
+import que.sera.sera.githubbrowser2.ui.component.RepoListViewItem
+import que.sera.sera.githubbrowser2.ui.theme.GitHubBrowserTheme
 
 @Serializable
 data object RouteTrend : NavKey
@@ -67,10 +68,15 @@ private fun TrendContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(MR.strings.trending_title)) },
+                title = {
+                    Text(
+                        text = stringResource(MR.strings.trending_title),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent
-                )
+                ),
             )
         }
     ) { innerPadding ->
@@ -99,10 +105,17 @@ private fun TrendContent(
                 }
 
                 else -> {
-                    LazyColumn(contentPadding = innerPadding) {
+                    LazyColumn(
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = innerPadding.calculateTopPadding() + 8.dp,
+                            bottom = innerPadding.calculateBottomPadding() + 8.dp,
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
                         itemsIndexed(repos) { index, repo ->
-                            TrendListViewItem(rank = index + 1, repo = repo)
-                            HorizontalDivider()
+                            RepoListViewItem(repo = repo, rank = index + 1)
                         }
                     }
                     if (uiState.isLoading) {
@@ -118,8 +131,8 @@ private fun TrendContent(
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(
-                                MaterialTheme.colorScheme.surface,
-                                MaterialTheme.colorScheme.surface.copy(alpha = 0.4f),
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.4f),
                             )
                         )
                     )
@@ -135,30 +148,13 @@ private fun TrendContent(
     }
 }
 
-@Composable
-private fun TrendListViewItem(rank: Int, repo: GitHubRepo) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = "#$rank",
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .width(40.dp)
-                .padding(start = 16.dp),
-        )
-        RepoListViewItem(repo = repo, modifier = Modifier.weight(1f))
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
 private fun PreviewTrendScreen(
     @PreviewParameter(TrendViewStateProvider::class) uiState: TrendViewState
 ) {
-    MaterialTheme {
+    GitHubBrowserTheme {
         TrendContent(uiState = uiState, onDismissErrorDialog = {})
     }
 }
@@ -175,13 +171,19 @@ private class TrendViewStateProvider : PreviewParameterProvider<TrendViewState> 
 }
 
 private val sampleRepos = listOf(
-    GitHubRepo(id = 1, name = "kotlin", fullName = "JetBrains/kotlin",
+    GitHubRepo(
+        id = 1, name = "kotlin", fullName = "JetBrains/kotlin",
         description = "The Kotlin Programming Language", stars = 50000, forks = 6000,
-        language = "Kotlin", htmlUrl = ""),
-    GitHubRepo(id = 2, name = "swift", fullName = "apple/swift",
+        language = "Kotlin", htmlUrl = ""
+    ),
+    GitHubRepo(
+        id = 2, name = "swift", fullName = "apple/swift",
         description = "The Swift Programming Language", stars = 67000, forks = 10000,
-        language = "C++", htmlUrl = ""),
-    GitHubRepo(id = 3, name = "linux", fullName = "torvalds/linux",
+        language = "C++", htmlUrl = ""
+    ),
+    GitHubRepo(
+        id = 3, name = "linux", fullName = "torvalds/linux",
         description = null, stars = 180000, forks = 55000,
-        language = "C", htmlUrl = ""),
+        language = "C", htmlUrl = ""
+    ),
 )

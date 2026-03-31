@@ -139,6 +139,12 @@ struct RepositoryViewContent: View {
 
 // MARK: - Previews
 
+private let sampleUser = GitHubUser(
+    name: "JetBrains",
+    login: "jetbrains",
+    avatarUrl: "https://avatars.githubusercontent.com/u/4314696"
+)
+
 private let sampleRepos: [GitHubRepo] = [
     GitHubRepo(
         id: 1,
@@ -196,7 +202,7 @@ private let sampleRepos: [GitHubRepo] = [
     NavigationStack {
         RepositoryViewContent(
             state: RepoViewState.companion.initialState
-                .success(repos: sampleRepos),
+                .success(user: sampleUser, repos: sampleRepos),
             onSearch: { _ in },
             onDismissError: {}
         )
@@ -207,7 +213,7 @@ private let sampleRepos: [GitHubRepo] = [
     NavigationStack {
         RepositoryViewContent(
             state: RepoViewState.companion.initialState
-                .success(repos: []),
+                .success(user: sampleUser, repos: []),
             onSearch: { _ in },
             onDismissError: {}
         )

@@ -4,6 +4,7 @@ import kotlin.native.ObjCName
 
 data class RepoViewState(
     val isLoading: Boolean = false,
+    val user: GitHubUser? = null,
     val repos: List<GitHubRepo>? = null,
     val errorMessage: ErrorMessage? = null,
 ) {
@@ -26,8 +27,9 @@ data class RepoViewState(
         isLoading = true,
     )
 
-    fun success(repos: List<GitHubRepo>) = copy(
+    fun success(user: GitHubUser, repos: List<GitHubRepo>) = copy(
         isLoading = false,
+        user = user,
         repos = repos,
         errorMessage = null
     )

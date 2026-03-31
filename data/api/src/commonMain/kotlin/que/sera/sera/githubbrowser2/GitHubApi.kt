@@ -31,6 +31,12 @@ class GitHubApi(
     }
 
     /**
+     * ユーザー情報からアバターと表示名を取得
+     */
+    suspend fun fetchUser(username: String): GitHubUser =
+        client.get("users/$username").body()
+
+    /**
      * 指定した[username]のリポジトリを最大100件取得する
      *
      * Paging3を使おうと考えたがSwiftUIでハンドリングする方法がほとんど提供されてないので一旦スルー
