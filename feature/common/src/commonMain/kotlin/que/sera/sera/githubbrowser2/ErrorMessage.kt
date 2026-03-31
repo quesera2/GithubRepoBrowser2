@@ -1,14 +1,12 @@
 package que.sera.sera.githubbrowser2
 
-import dev.icerock.moko.resources.desc.StringDesc
+sealed class ErrorMessage<out T> {
+    abstract val error: T
 
-sealed class ErrorMessage(
-    val message: StringDesc
-) {
-    class CancelOnly(message: StringDesc) : ErrorMessage(message)
+    data class CancelOnly<T>(override val error: T) : ErrorMessage<T>()
 
-    class CanRetry(
-        message: StringDesc,
+    class CanRetry<T>(
+        override val error: T,
         val retryAction: () -> Unit,
-    ) : ErrorMessage(message)
+    ) : ErrorMessage<T>()
 }

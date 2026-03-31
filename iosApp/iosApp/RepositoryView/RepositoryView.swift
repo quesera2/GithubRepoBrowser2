@@ -50,9 +50,25 @@ struct RepositoryViewContent: View {
                 onSearch(searchText)
                 isSearchPresented = false
             }
-            .errorAlert(errorMessage: state.errorMessage, onDismissError: onDismissError)
+            .errorAlert(
+                errorMessage: state.errorMessage,
+                message: repoErrorMessage(state.errorMessage?.error),
+                onDismissError: onDismissError
+            )
     }
-    
+
+    private func repoErrorMessage(_ error: RepoError?) -> StringResource? {
+        guard let error else { return nil }
+        switch onEnum(of: error) {
+        case .emptyUsername:
+            return MR.strings().please_enter_username
+        case .networkError:
+            return MR.strings().network_error
+        case .unknownError:
+            return MR.strings().unknown_error
+        }
+    }
+
     @ViewBuilder
     private var sectionHeader: some View {
         VStack(alignment: .leading, spacing: 2) {
@@ -224,8 +240,8 @@ private let sampleRepos: [GitHubRepo] = [
     NavigationStack {
         RepositoryViewContent(
             state: RepoViewState.companion.initialState
-                .failure(errorMessage: ErrorMessage.CanRetry(
-                    message: RawStringDesc(string: "ネットワークエラーが発生しました"),
+                .failure(errorMessage: ErrorMessageCanRetry(
+                    error: RepoError.NetworkError.shared,
                     retryAction: {}
                 )),
             onSearch: { _ in },
@@ -238,8 +254,8 @@ private let sampleRepos: [GitHubRepo] = [
     NavigationStack {
         RepositoryViewContent(
             state: RepoViewState.companion.initialState
-                .failure(errorMessage: ErrorMessage.CancelOnly(
-                    message: RawStringDesc(string: "ユーザー名を入力してください")
+                .failure(errorMessage: ErrorMessageCancelOnly(
+                    error: RepoError.EmptyUsername.shared
                 )),
             onSearch: { _ in },
             onDismissError: {}

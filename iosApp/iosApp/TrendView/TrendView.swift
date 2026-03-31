@@ -31,7 +31,21 @@ struct TrendViewContent: View {
 
     var body: some View {
         content
-            .errorAlert(errorMessage: state.errorMessage, onDismissError: onDismissError)
+            .errorAlert(
+                errorMessage: state.errorMessage,
+                message: trendErrorMessage(state.errorMessage?.error),
+                onDismissError: onDismissError
+            )
+    }
+
+    private func trendErrorMessage(_ error: TrendError?) -> StringResource? {
+        guard let error else { return nil }
+        switch onEnum(of: error) {
+        case .networkError:
+            return MR.strings().network_error
+        case .unknownError:
+            return MR.strings().unknown_error
+        }
     }
 
     @ViewBuilder
@@ -172,8 +186,8 @@ private let sampleRepos: [GitHubRepo] = [
 #Preview("Error") {
     TrendViewContent(
         state: TrendViewState.companion.initialState.failure(
-            errorMessage: ErrorMessage.CanRetry(
-                message: RawStringDesc(string: "Network error"),
+            errorMessage: ErrorMessageCanRetry(
+                error: TrendError.NetworkError.shared,
                 retryAction: {}
             )
         ),

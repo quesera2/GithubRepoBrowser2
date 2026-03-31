@@ -49,11 +49,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
-import dev.icerock.moko.resources.desc.desc
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.serialization.Serializable
 import que.sera.sera.githubbrowser2.ErrorMessage
 import que.sera.sera.githubbrowser2.GitHubRepo
+import que.sera.sera.githubbrowser2.RepoError
 import que.sera.sera.githubbrowser2.GitHubUser
 import que.sera.sera.githubbrowser2.MR
 import que.sera.sera.githubbrowser2.R
@@ -177,7 +177,12 @@ private fun SearchContent(
             }
 
             uiState.errorMessage?.let { errorMessage ->
-                ErrorDialog(errorMessage = errorMessage, onDismiss = onDismissErrorDialog)
+                val message = when (val error = errorMessage.error) {
+                    is RepoError.EmptyUsername -> stringResource(MR.strings.please_enter_username)
+                    is RepoError.NetworkError -> stringResource(MR.strings.network_error)
+                    is RepoError.UnknownError -> stringResource(MR.strings.unknown_error)
+                }
+                ErrorDialog(errorMessage = errorMessage, message = message, onDismiss = onDismissErrorDialog)
             }
         }
     }
@@ -311,8 +316,8 @@ private class RepoViewStateProvider : PreviewParameterProvider<RepoViewState> {
         "Loading" to RepoViewState().loading(),
         "Success" to RepoViewState().success(sampleUser, sampleRepos),
         "Empty" to RepoViewState().success(sampleUser, emptyList()),
-        "Retry Error" to RepoViewState().failure(ErrorMessage.CanRetry("Not Found".desc()) {}),
-        "Cancel Error" to RepoViewState().failure(ErrorMessage.CancelOnly("Not Found".desc())),
+        "Retry Error" to RepoViewState().failure(ErrorMessage.CanRetry(RepoError.NetworkError) {}),
+        "Cancel Error" to RepoViewState().failure(ErrorMessage.CancelOnly(RepoError.EmptyUsername)),
     )
     override val values = named.map { it.second }.asSequence()
     override fun getDisplayName(index: Int) = named[index].first

@@ -7,6 +7,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.io.IOException
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
@@ -34,7 +35,7 @@ class GitHubApi(
      * ユーザー情報からアバターと表示名を取得
      */
     suspend fun fetchUser(username: String): GitHubUser =
-        client.get("users/$username").body()
+        runCatchingNetwork { client.get("users/$username").body() }
 
     /**
      * 指定した[username]のリポジトリを最大100件取得する
@@ -45,12 +46,14 @@ class GitHubApi(
         username: String,
         perPage: Int = 100,
         sort: String = "updated"
-    ): List<GitHubRepo> = client.get("users/$username/repos") {
-        url {
-            parameters.append("per_page", perPage.toString())
-            parameters.append("sort", sort)
-        }
-    }.body()
+    ): List<GitHubRepo> = runCatchingNetwork {
+        client.get("users/$username/repos") {
+            url {
+                parameters.append("per_page", perPage.toString())
+                parameters.append("sort", sort)
+            }
+        }.body()
+    }
 
     /**
      * 直近1ヶ月以内に push されたリポジトリをスター数降順で返す
@@ -61,13 +64,13 @@ class GitHubApi(
         language: String? = null,
         perPage: Int = 30,
         page: Int = 1,
-    ): GitHubSearchResult {
+    ): GitHubSearchResult = runCatchingNetwork {
         val since = Clock.System.todayIn(TimeZone.UTC).minus(1, DateTimeUnit.MONTH)
         val query = buildString {
             append("pushed:>$since")
             if (language != null) append("+language:$language")
         }
-        return client.get("search/repositories") {
+        client.get("search/repositories") {
             url {
                 parameters.append("q", query)
                 parameters.append("sort", "stars")
@@ -76,5 +79,11 @@ class GitHubApi(
                 parameters.append("page", page.toString())
             }
         }.body()
+    }
+
+    private suspend fun <T> runCatchingNetwork(block: suspend () -> T): T = try {
+        block()
+    } catch (e: IOException) {
+        throw NetworkException(e)
     }
 }

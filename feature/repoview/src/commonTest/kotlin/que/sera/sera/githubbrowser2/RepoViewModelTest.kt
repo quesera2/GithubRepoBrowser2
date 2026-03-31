@@ -1,7 +1,6 @@
 package que.sera.sera.githubbrowser2
 
 import app.cash.turbine.test
-import dev.icerock.moko.resources.desc.desc
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -34,8 +33,8 @@ class RepoViewModelTest : DescribeSpec({
                         awaitItem() // 初期状態
                         viewModel.fetchRepos("")
                         val error =
-                            awaitItem().errorMessage.shouldBeInstanceOf<ErrorMessage.CancelOnly>()
-                        error.message shouldBe MR.strings.please_enter_username.desc()
+                            awaitItem().errorMessage.shouldBeInstanceOf<ErrorMessage.CancelOnly<RepoError>>()
+                        error.error shouldBe RepoError.EmptyUsername
                         cancelAndIgnoreRemainingEvents()
                     }
                 }
@@ -94,21 +93,44 @@ class RepoViewModelTest : DescribeSpec({
         }
 
         context("リポジトリ取得に失敗した場合") {
-            it("CanRetryエラーが設定される") {
-                runTest(testDispatcher.scheduler) {
-                    val viewModel = RepoViewModel(
-                        FakeGitHubRepository(Result.failure(Exception("ネットワークエラー")))
-                    )
+            context("ネットワークエラーの場合") {
+                it("NetworkErrorのCanRetryエラーが設定される") {
+                    runTest(testDispatcher.scheduler) {
+                        val viewModel = RepoViewModel(
+                            FakeGitHubRepository(Result.failure(NetworkException()))
+                        )
 
-                    viewModel.state.test {
-                        awaitItem() // 初期状態
-                        viewModel.fetchRepos("quesera2")
-                        awaitItem() // ローディング中
-                        val state = awaitItem()
-                        val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry>()
-                        error.message shouldBe "ネットワークエラー".desc()
-                        state.isLoading shouldBe false
-                        cancelAndIgnoreRemainingEvents()
+                        viewModel.state.test {
+                            awaitItem() // 初期状態
+                            viewModel.fetchRepos("quesera2")
+                            awaitItem() // ローディング中
+                            val state = awaitItem()
+                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<RepoError>>()
+                            error.error shouldBe RepoError.NetworkError
+                            state.isLoading shouldBe false
+                            cancelAndIgnoreRemainingEvents()
+                        }
+                    }
+                }
+            }
+
+            context("その他のエラーの場合") {
+                it("UnknownErrorのCanRetryエラーが設定される") {
+                    runTest(testDispatcher.scheduler) {
+                        val viewModel = RepoViewModel(
+                            FakeGitHubRepository(Result.failure(Exception("予期しないエラー")))
+                        )
+
+                        viewModel.state.test {
+                            awaitItem() // 初期状態
+                            viewModel.fetchRepos("quesera2")
+                            awaitItem() // ローディング中
+                            val state = awaitItem()
+                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<RepoError>>()
+                            error.error shouldBe RepoError.UnknownError
+                            state.isLoading shouldBe false
+                            cancelAndIgnoreRemainingEvents()
+                        }
                     }
                 }
             }
