@@ -18,7 +18,7 @@ turbine = "1.2.1"
 metro = "0.12.1"
 mokoResources = "0.26.1"
 androidx-navigation3 = "1.0.1"
-coil = "3.2.0"
+coil = "3.4.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
