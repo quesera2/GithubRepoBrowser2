@@ -32,11 +32,11 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import dev.icerock.moko.resources.compose.stringResource
-import dev.icerock.moko.resources.desc.desc
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.serialization.Serializable
 import que.sera.sera.githubbrowser2.ErrorMessage
 import que.sera.sera.githubbrowser2.GitHubRepo
+import que.sera.sera.githubbrowser2.TrendError
 import que.sera.sera.githubbrowser2.MR
 import que.sera.sera.githubbrowser2.TrendViewModel
 import que.sera.sera.githubbrowser2.TrendViewState
@@ -139,10 +139,11 @@ private fun TrendContent(
             )
 
             uiState.errorMessage?.let { errorMessage ->
-                ErrorDialog(
-                    errorMessage = errorMessage,
-                    onDismiss = onDismissErrorDialog,
-                )
+                val message = when (val error = errorMessage.error) {
+                    is TrendError.NetworkError -> stringResource(MR.strings.network_error)
+                    is TrendError.UnknownError -> stringResource(MR.strings.unknown_error)
+                }
+                ErrorDialog(errorMessage = errorMessage, message = message, onDismiss = onDismissErrorDialog)
             }
         }
     }
@@ -164,7 +165,7 @@ private class TrendViewStateProvider : PreviewParameterProvider<TrendViewState> 
         "Loading" to TrendViewState().loading(),
         "Success" to TrendViewState().success(sampleRepos),
         "Empty" to TrendViewState().success(emptyList()),
-        "Error" to TrendViewState().failure(ErrorMessage.CanRetry("Network error".desc()) {}),
+        "Error" to TrendViewState().failure(ErrorMessage.CanRetry(TrendError.NetworkError) {}),
     )
     override val values = named.map { it.second }.asSequence()
     override fun getDisplayName(index: Int) = named[index].first

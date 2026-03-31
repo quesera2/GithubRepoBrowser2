@@ -6,7 +6,7 @@ data class RepoViewState(
     val isLoading: Boolean = false,
     val user: GitHubUser? = null,
     val repos: List<GitHubRepo>? = null,
-    val errorMessage: ErrorMessage? = null,
+    val errorMessage: ErrorMessage<RepoError>? = null,
 ) {
     companion object {
         @OptIn(kotlin.experimental.ExperimentalObjCName::class)
@@ -34,7 +34,7 @@ data class RepoViewState(
         errorMessage = null
     )
 
-    fun failure(errorMessage: ErrorMessage) = copy(
+    fun failure(errorMessage: ErrorMessage<RepoError>) = copy(
         isLoading = false,
         errorMessage = errorMessage,
     )

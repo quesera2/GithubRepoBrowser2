@@ -1,8 +1,9 @@
 import SwiftUI
 import Shared
 
-private struct ErrorAlertModifier: ViewModifier {
-    let errorMessage: ErrorMessage?
+private struct ErrorAlertModifier<E: AnyObject>: ViewModifier {
+    let errorMessage: ErrorMessage<E>?
+    let message: StringResource?
     let onDismissError: () -> Void
 
     func body(content: Content) -> some View {
@@ -16,15 +17,15 @@ private struct ErrorAlertModifier: ViewModifier {
                     case .cancelOnly:
                         Button(.stringResource(\.close_button), role: .cancel) { onDismissError() }
                     }
-                }            
+                }
             } message: {
-                Text(verbatim: errorMessage?.message.localized() ?? "")
+                Text(verbatim: message?.desc().localized() ?? "")
             }
     }
 }
 
 extension View {
-    func errorAlert(errorMessage: ErrorMessage?, onDismissError: @escaping () -> Void) -> some View {
-        modifier(ErrorAlertModifier(errorMessage: errorMessage, onDismissError: onDismissError))
+    func errorAlert<E: AnyObject>(errorMessage: ErrorMessage<E>?, message: StringResource?, onDismissError: @escaping () -> Void) -> some View {
+        modifier(ErrorAlertModifier(errorMessage: errorMessage, message: message, onDismissError: onDismissError))
     }
 }

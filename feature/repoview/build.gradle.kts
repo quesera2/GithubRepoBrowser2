@@ -32,11 +32,9 @@ kotlin {
             implementation(projects.domain.model)
             implementation(projects.domain.contract)
             implementation(projects.feature.common)
-            implementation(projects.feature.resources)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.metro.runtime)
-            implementation(libs.moko.resources)
         }
         commonTest.dependencies {
             implementation(projects.feature.testSupport)

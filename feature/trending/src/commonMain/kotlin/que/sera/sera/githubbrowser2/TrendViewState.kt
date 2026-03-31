@@ -5,7 +5,7 @@ import kotlin.native.ObjCName
 data class TrendViewState(
     val isLoading: Boolean = false,
     val repos: List<GitHubRepo>? = null,
-    val errorMessage: ErrorMessage? = null,
+    val errorMessage: ErrorMessage<TrendError>? = null,
 ) {
     companion object {
         @OptIn(kotlin.experimental.ExperimentalObjCName::class)
@@ -32,7 +32,7 @@ data class TrendViewState(
         errorMessage = null
     )
 
-    fun failure(errorMessage: ErrorMessage) = copy(
+    fun failure(errorMessage: ErrorMessage<TrendError>) = copy(
         isLoading = false,
         errorMessage = errorMessage,
     )

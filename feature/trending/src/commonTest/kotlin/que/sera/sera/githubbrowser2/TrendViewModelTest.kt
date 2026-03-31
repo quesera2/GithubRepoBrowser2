@@ -12,7 +12,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class RepoViewModelTest : DescribeSpec({
+class TrendViewModelTest : DescribeSpec({
     val testDispatcher = StandardTestDispatcher()
 
     beforeEach {
@@ -23,32 +23,15 @@ class RepoViewModelTest : DescribeSpec({
         Dispatchers.resetMain()
     }
 
-    describe("fetchRepos") {
-        context("ユーザー名が空文字の場合") {
-            it("CancelOnlyエラーが設定される") {
-                runTest(testDispatcher.scheduler) {
-                    val viewModel = RepoViewModel(FakeGitHubRepository())
-
-                    viewModel.state.test {
-                        awaitItem() // 初期状態
-                        viewModel.fetchRepos("")
-                        val error =
-                            awaitItem().errorMessage.shouldBeInstanceOf<ErrorMessage.CancelOnly<RepoError>>()
-                        error.error shouldBe RepoError.EmptyUsername
-                        cancelAndIgnoreRemainingEvents()
-                    }
-                }
-            }
-        }
-
-        context("リポジトリ取得中の場合") {
+    describe("fetchTrending") {
+        context("トレンド取得中の場合") {
             it("ローディング状態になる") {
                 runTest(testDispatcher.scheduler) {
-                    val viewModel = RepoViewModel(FakeGitHubRepository())
+                    val viewModel = TrendViewModel(FakeGitHubRepository())
 
                     viewModel.state.test {
                         awaitItem() // 初期状態
-                        viewModel.fetchRepos("quesera2")
+                        viewModel.fetchTrending()
                         val state = awaitItem()
                         state.isLoading shouldBe true
                         cancelAndIgnoreRemainingEvents()
@@ -57,15 +40,14 @@ class RepoViewModelTest : DescribeSpec({
             }
         }
 
-        context("リポジトリ取得に成功した場合") {
+        context("トレンド取得に成功した場合") {
             it("ローディング表示を行うこと") {
                 runTest(testDispatcher.scheduler) {
-                    val viewModel =
-                        RepoViewModel(FakeGitHubRepository(Result.success(SAMPLE_REPOS)))
+                    val viewModel = TrendViewModel(FakeGitHubRepository(Result.success(SAMPLE_REPOS)))
 
                     viewModel.state.test {
                         awaitItem().isLoading shouldBe false // 初期状態
-                        viewModel.fetchRepos("quesera2")
+                        viewModel.fetchTrending()
                         awaitItem().isLoading shouldBe true  // ローディング中
                         awaitItem().isLoading shouldBe false // 完了後
                         cancelAndIgnoreRemainingEvents()
@@ -73,41 +55,37 @@ class RepoViewModelTest : DescribeSpec({
                 }
             }
 
-            it("ユーザーとリポジトリ一覧が設定される") {
+            it("リポジトリ一覧が設定される") {
                 runTest(testDispatcher.scheduler) {
-                    val viewModel =
-                        RepoViewModel(FakeGitHubRepository(Result.success(SAMPLE_REPOS)))
+                    val viewModel = TrendViewModel(FakeGitHubRepository(Result.success(SAMPLE_REPOS)))
 
                     viewModel.state.test {
                         awaitItem() // 初期状態
-                        viewModel.fetchRepos("quesera2")
+                        viewModel.fetchTrending()
                         awaitItem() // ローディング中
                         val state = awaitItem()
-                        state.user shouldBe FAKE_USER
                         state.repos shouldBe SAMPLE_REPOS
-                        state.isLoading shouldBe false
                         cancelAndIgnoreRemainingEvents()
                     }
                 }
             }
         }
 
-        context("リポジトリ取得に失敗した場合") {
+        context("トレンド取得に失敗した場合") {
             context("ネットワークエラーの場合") {
                 it("NetworkErrorのCanRetryエラーが設定される") {
                     runTest(testDispatcher.scheduler) {
-                        val viewModel = RepoViewModel(
+                        val viewModel = TrendViewModel(
                             FakeGitHubRepository(Result.failure(NetworkException()))
                         )
 
                         viewModel.state.test {
                             awaitItem() // 初期状態
-                            viewModel.fetchRepos("quesera2")
+                            viewModel.fetchTrending()
                             awaitItem() // ローディング中
                             val state = awaitItem()
-                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<RepoError>>()
-                            error.error shouldBe RepoError.NetworkError
-                            state.isLoading shouldBe false
+                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<TrendError>>()
+                            error.error shouldBe TrendError.NetworkError
                             cancelAndIgnoreRemainingEvents()
                         }
                     }
@@ -117,18 +95,17 @@ class RepoViewModelTest : DescribeSpec({
             context("その他のエラーの場合") {
                 it("UnknownErrorのCanRetryエラーが設定される") {
                     runTest(testDispatcher.scheduler) {
-                        val viewModel = RepoViewModel(
+                        val viewModel = TrendViewModel(
                             FakeGitHubRepository(Result.failure(Exception("予期しないエラー")))
                         )
 
                         viewModel.state.test {
                             awaitItem() // 初期状態
-                            viewModel.fetchRepos("quesera2")
+                            viewModel.fetchTrending()
                             awaitItem() // ローディング中
                             val state = awaitItem()
-                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<RepoError>>()
-                            error.error shouldBe RepoError.UnknownError
-                            state.isLoading shouldBe false
+                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<TrendError>>()
+                            error.error shouldBe TrendError.UnknownError
                             cancelAndIgnoreRemainingEvents()
                         }
                     }
@@ -140,13 +117,13 @@ class RepoViewModelTest : DescribeSpec({
     describe("onErrorDismissed") {
         it("エラーメッセージがクリアされる") {
             runTest(testDispatcher.scheduler) {
-                val viewModel = RepoViewModel(
+                val viewModel = TrendViewModel(
                     FakeGitHubRepository(Result.failure(Exception("エラー")))
                 )
 
                 viewModel.state.test {
                     awaitItem() // 初期状態
-                    viewModel.fetchRepos("quesera2")
+                    viewModel.fetchTrending()
                     awaitItem() // ローディング中
                     awaitItem() // エラー状態
                     viewModel.onErrorDismissed()
@@ -163,12 +140,12 @@ class RepoViewModelTest : DescribeSpec({
 private val SAMPLE_REPOS = listOf(
     GitHubRepo(
         id = 1,
-        name = "sample-repo",
-        fullName = "user/sample-repo",
-        description = "サンプル",
-        stars = 100,
-        forks = 10,
+        name = "kotlin",
+        fullName = "JetBrains/kotlin",
+        description = "The Kotlin Programming Language",
+        stars = 50000,
+        forks = 6000,
         language = "Kotlin",
-        htmlUrl = "https://github.com/user/sample-repo",
+        htmlUrl = "https://github.com/JetBrains/kotlin",
     )
 )
