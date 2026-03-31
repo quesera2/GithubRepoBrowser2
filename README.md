@@ -1,13 +1,15 @@
 # GitHub Repo Browser
 
-GitHubのユーザー名を入力して、そのユーザーのリポジトリ一覧を表示するアプリです。
+GitHubの活発なリポジトリを表示するアプリです。ユーザー名を入力して、そのユーザーのリポジトリ一覧を表示することもできます。
+
 Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI で動作します。
 
 ## スクリーンショット
 
-| Android | iOS |
+| トレンド画面 | 検索画面 |
 |:---:|:---:|
-| <img src="docs/screenshots/android.png" width="300"> | <img src="docs/screenshots/ios.png" width="300"> |
+| <img src="docs/screenshots/trend_android.png" width="300"> | <img src="docs/screenshots/search_android.png" width="300"> |
+| <img src="docs/screenshots/trend_ios.png" width="300"> | <img src="docs/screenshots/search_ios.png" width="300"> |
 
 ## 技術スタック
 
