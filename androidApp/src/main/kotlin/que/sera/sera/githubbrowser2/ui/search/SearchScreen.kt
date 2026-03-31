@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,8 +15,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -43,17 +47,21 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
+import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.desc.desc
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.serialization.Serializable
 import que.sera.sera.githubbrowser2.ErrorMessage
 import que.sera.sera.githubbrowser2.GitHubRepo
+import que.sera.sera.githubbrowser2.GitHubUser
 import que.sera.sera.githubbrowser2.MR
 import que.sera.sera.githubbrowser2.R
 import que.sera.sera.githubbrowser2.RepoViewModel
 import que.sera.sera.githubbrowser2.RepoViewState
 import que.sera.sera.githubbrowser2.ui.component.ErrorDialog
+import que.sera.sera.githubbrowser2.ui.component.RepoListViewItem
+import que.sera.sera.githubbrowser2.ui.theme.GitHubBrowserTheme
 
 @Serializable
 data object RouteSearch : NavKey
@@ -141,6 +149,7 @@ private fun SearchContent(
                 .fillMaxSize()
         ) {
             RepoListContent(
+                user = uiState.user,
                 repos = repos,
                 isLoading = uiState.isLoading,
                 innerPadding = innerPadding,
@@ -176,6 +185,7 @@ private fun SearchContent(
 
 @Composable
 private fun RepoListContent(
+    user: GitHubUser?,
     repos: List<GitHubRepo>?,
     isLoading: Boolean,
     innerPadding: PaddingValues,
@@ -217,9 +227,47 @@ private fun RepoListContent(
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        if (user != null) {
+            item { UserHeader(user) }
+        }
         items(repos) { repo ->
             RepoListViewItem(repo)
         }
+    }
+}
+
+@Composable
+private fun UserHeader(user: GitHubUser) {
+    Column {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(vertical = 8.dp),
+        ) {
+            AsyncImage(
+                model = user.avatarUrl,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape),
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(
+                    text = user.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Text(
+                    text = user.login,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
     }
 }
 
@@ -248,7 +296,7 @@ private fun EmptyView() {
 private fun PreviewSearch(
     @PreviewParameter(RepoViewStateProvider::class) uiState: RepoViewState
 ) {
-    MaterialTheme {
+    GitHubBrowserTheme {
         SearchContent(
             uiState = uiState,
             onSearch = {},
@@ -261,14 +309,20 @@ private class RepoViewStateProvider : PreviewParameterProvider<RepoViewState> {
     private val named = listOf(
         "Idle" to RepoViewState(),
         "Loading" to RepoViewState().loading(),
-        "Success" to RepoViewState().success(sampleRepos),
-        "Empty" to RepoViewState().success(emptyList()),
+        "Success" to RepoViewState().success(sampleUser, sampleRepos),
+        "Empty" to RepoViewState().success(sampleUser, emptyList()),
         "Retry Error" to RepoViewState().failure(ErrorMessage.CanRetry("Not Found".desc()) {}),
         "Cancel Error" to RepoViewState().failure(ErrorMessage.CancelOnly("Not Found".desc())),
     )
     override val values = named.map { it.second }.asSequence()
     override fun getDisplayName(index: Int) = named[index].first
 }
+
+private val sampleUser = GitHubUser(
+    login = "jetbrains",
+    name = "JetBrains",
+    avatarUrl = "https://avatars.githubusercontent.com/u/4314696",
+)
 
 private val sampleRepos = listOf(
     GitHubRepo(

@@ -1,4 +1,4 @@
-package que.sera.sera.githubbrowser2.ui.search
+package que.sera.sera.githubbrowser2.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

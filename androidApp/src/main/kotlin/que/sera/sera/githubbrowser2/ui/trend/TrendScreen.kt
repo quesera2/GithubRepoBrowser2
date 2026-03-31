@@ -41,7 +41,7 @@ import que.sera.sera.githubbrowser2.MR
 import que.sera.sera.githubbrowser2.TrendViewModel
 import que.sera.sera.githubbrowser2.TrendViewState
 import que.sera.sera.githubbrowser2.ui.component.ErrorDialog
-import que.sera.sera.githubbrowser2.ui.search.RepoListViewItem
+import que.sera.sera.githubbrowser2.ui.component.RepoListViewItem
 import que.sera.sera.githubbrowser2.ui.theme.GitHubBrowserTheme
 
 @Serializable

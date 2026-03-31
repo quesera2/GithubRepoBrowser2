@@ -11,7 +11,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import que.sera.sera.githubbrowser2.MR
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RepoViewModelTest : DescribeSpec({
@@ -75,7 +74,7 @@ class RepoViewModelTest : DescribeSpec({
                 }
             }
 
-            it("リポジトリ一覧が設定される") {
+            it("ユーザーとリポジトリ一覧が設定される") {
                 runTest(testDispatcher.scheduler) {
                     val viewModel =
                         RepoViewModel(FakeGitHubRepository(Result.success(SAMPLE_REPOS)))
@@ -85,6 +84,7 @@ class RepoViewModelTest : DescribeSpec({
                         viewModel.fetchRepos("quesera2")
                         awaitItem() // ローディング中
                         val state = awaitItem()
+                        state.user shouldBe FAKE_USER
                         state.repos shouldBe SAMPLE_REPOS
                         state.isLoading shouldBe false
                         cancelAndIgnoreRemainingEvents()

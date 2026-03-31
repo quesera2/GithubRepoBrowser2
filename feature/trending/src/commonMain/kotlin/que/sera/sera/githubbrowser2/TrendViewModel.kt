@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.icerock.moko.resources.desc.desc
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -24,6 +25,8 @@ class TrendViewModel(
             try {
                 val repos = repository.fetchTrendingRepos()
                 state.update { it.success(repos) }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 val message = e.message?.desc() ?: MR.strings.unknown_error.desc()
                 state.update {

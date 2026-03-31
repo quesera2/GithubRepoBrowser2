@@ -51,4 +51,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtimeCompose)
     debugImplementation(libs.compose.uiTooling)
     implementation(libs.moko.resources.compose)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.ktor)
 }
