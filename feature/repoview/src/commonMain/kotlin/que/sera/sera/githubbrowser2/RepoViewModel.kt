@@ -6,6 +6,7 @@ import dev.icerock.moko.resources.desc.desc
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -30,9 +31,11 @@ class RepoViewModel(
         viewModelScope.launch {
             state.update { it.loading() }
             try {
-                val user = async { repository.fetchUser(username) }
-                val repos = async { repository.fetchRepos(username) }
-                state.update { it.success(user.await(), repos.await()) }
+                coroutineScope {
+                    val user = async { repository.fetchUser(username) }
+                    val repos = async { repository.fetchRepos(username) }
+                    state.update { it.success(user.await(), repos.await()) }
+                }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
