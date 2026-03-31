@@ -16,8 +16,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -48,10 +49,10 @@ import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.serialization.Serializable
 import que.sera.sera.githubbrowser2.ErrorMessage
 import que.sera.sera.githubbrowser2.GitHubRepo
+import que.sera.sera.githubbrowser2.MR
 import que.sera.sera.githubbrowser2.R
 import que.sera.sera.githubbrowser2.RepoViewModel
 import que.sera.sera.githubbrowser2.RepoViewState
-import que.sera.sera.githubbrowser2.MR
 import que.sera.sera.githubbrowser2.ui.component.ErrorDialog
 
 @Serializable
@@ -84,20 +85,14 @@ private fun SearchContent(
             Column {
                 TopAppBar(
                     title = {
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Text(stringResource(MR.strings.search_title))
-                            Text(
-                                text = stringResource(MR.strings.search_subtitle),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
+                        Text(
+                            text = stringResource(MR.strings.search_title),
+                            fontWeight = FontWeight.Bold
+                        )
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = Color.Transparent
-                    )
+                    ),
                 )
                 SearchBar(
                     inputField = {
@@ -107,9 +102,18 @@ private fun SearchContent(
                                 Icon(
                                     painter = painterResource(R.drawable.icon_search),
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.outline,
                                     modifier = Modifier.size(20.dp),
                                 )
+                            },
+                            trailingIcon = {
+                                if (query.isNotEmpty()) {
+                                    IconButton(onClick = { query = "" }) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.icon_close),
+                                            contentDescription = null,
+                                        )
+                                    }
+                                }
                             },
                             onQueryChange = { query = it },
                             onSearch = {
@@ -150,9 +154,9 @@ private fun SearchContent(
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(
-                                MaterialTheme.colorScheme.surface,
-                                MaterialTheme.colorScheme.surface.copy(alpha = 0.4f),
-                            ),
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.4f),
+                            )
                         )
                     )
             )
