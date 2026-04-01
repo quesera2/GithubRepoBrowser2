@@ -25,7 +25,7 @@ class TrendViewModel(
                 state.update { it.success(repos) }
             } catch (e: CancellationException) {
                 throw e
-            } catch (e: NetworkException) {
+            } catch (e: RepositoryException) {
                 state.update {
                     it.failure(ErrorMessage.CanRetry(TrendError.NetworkError) { fetchTrending() })
                 }

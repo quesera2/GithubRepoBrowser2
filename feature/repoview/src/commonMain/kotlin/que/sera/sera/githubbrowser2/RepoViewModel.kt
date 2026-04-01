@@ -37,7 +37,7 @@ class RepoViewModel(
                 }
             } catch (e: CancellationException) {
                 throw e
-            } catch (e: NetworkException) {
+            } catch (e: RepositoryException) {
                 state.update {
                     it.failure(ErrorMessage.CanRetry(RepoError.NetworkError) { fetchRepos(username) })
                 }

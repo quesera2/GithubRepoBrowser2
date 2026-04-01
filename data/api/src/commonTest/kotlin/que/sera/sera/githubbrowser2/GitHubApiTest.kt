@@ -7,6 +7,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.http.ContentType
@@ -14,6 +15,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLProtocol
 import io.ktor.http.headersOf
+import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.io.IOException
 import kotlinx.serialization.json.Json
@@ -35,8 +37,8 @@ class GitHubApiTest : DescribeSpec({
                 )
             }
 
-            it("NetworkExceptionにラップされる") {
-                shouldThrow<NetworkException> {
+            it("IOExceptionが伝播する") {
+                shouldThrow<IOException> {
                     api.fetchUser("testuser")
                 }
             }
@@ -82,8 +84,8 @@ class GitHubApiTest : DescribeSpec({
                 )
             }
 
-            it("NetworkExceptionにラップされる") {
-                shouldThrow<NetworkException> {
+            it("JsonConvertExceptionが伝播する") {
+                shouldThrow<JsonConvertException> {
                     api.fetchUser("testuser")
                 }
             }
@@ -106,8 +108,8 @@ class GitHubApiTest : DescribeSpec({
                 )
             }
 
-            it("NetworkExceptionにラップされる") {
-                shouldThrow<NetworkException> {
+            it("ResponseExceptionが伝播する") {
+                shouldThrow<ResponseException> {
                     api.fetchUser("testuser")
                 }
             }
@@ -130,8 +132,8 @@ class GitHubApiTest : DescribeSpec({
                 )
             }
 
-            it("NetworkExceptionにラップされる") {
-                shouldThrow<NetworkException> {
+            it("ResponseExceptionが伝播する") {
+                shouldThrow<ResponseException> {
                     api.fetchUser("testuser")
                 }
             }
