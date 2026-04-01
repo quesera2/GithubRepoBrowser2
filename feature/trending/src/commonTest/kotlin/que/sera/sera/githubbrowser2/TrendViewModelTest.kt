@@ -76,7 +76,7 @@ class TrendViewModelTest : DescribeSpec({
                 it("NetworkErrorのCanRetryエラーが設定される") {
                     runTest(testDispatcher.scheduler) {
                         val viewModel = TrendViewModel(
-                            FakeGitHubRepository(Result.failure(NetworkException()))
+                            FakeGitHubRepository(Result.failure(RepositoryException()))
                         )
 
                         viewModel.state.test {
