@@ -3,9 +3,9 @@ import Shared
 
 struct TrendView: View {
     @Environment(\.trendViewModel) private var vm: TrendViewModel?
-
+    
     @State private var state: TrendViewState = TrendViewState.companion.initialState
-
+    
     var body: some View {
         if let vm {
             TrendViewContent(
@@ -24,20 +24,22 @@ struct TrendView: View {
 }
 
 struct TrendViewContent: View {
-
+    
     var state: TrendViewState
     var onRetry: () -> Void
     var onDismissError: () -> Void
-
+    
     var body: some View {
         content
+            .navigationTitle(Text(\.trending_title))
+            .background(.themeBackground)
             .errorAlert(
                 errorMessage: state.errorMessage,
                 message: trendErrorMessage(state.errorMessage?.error),
                 onDismissError: onDismissError
             )
     }
-
+    
     private func trendErrorMessage(_ error: TrendError?) -> StringResource? {
         guard let error else { return nil }
         switch onEnum(of: error) {
@@ -47,7 +49,7 @@ struct TrendViewContent: View {
             return MR.strings().unknown_error
         }
     }
-
+    
     @ViewBuilder
     private var content: some View {
         ZStack {
@@ -56,71 +58,28 @@ struct TrendViewContent: View {
                 ProgressView()
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.themeBackground)
     }
-
+    
     @ViewBuilder
     private var repoListContent: some View {
         if let repos = state.repos {
             if repos.isEmpty {
                 VStack(spacing: 0) {
-                    sectionHeader
-                        .padding(.horizontal)
-                    Spacer()
                     Text(\.no_trending_repositories_found)
                         .font(.system(size: 15, weight: .regular))
-                        .foregroundStyle(Color.themeSecondary)
-                    Spacer()
+                        .foregroundStyle(.themeSecondary)
                 }
             } else {
                 List {
-                    Section {
-                        ForEach(Array(repos.enumerated()), id: \.element.id) { index, repo in
-                            TrendRepositoryCell(rank: index + 1, repo: repo)
-                        }
-                    } header: {
-                        sectionHeader
-                            .textCase(nil)
-                            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16))
+                    ForEach(Array(repos.enumerated()), id: \.element.id) { index, repo in
+                        GitHubRepositoryCell(repo: repo, rank: index + 1)
                     }
                 }
-                .listStyle(.plain)
-                .contentMargins(.top, 0, for: .scrollContent)
+                .repoListStyle()
             }
-        } else if !state.isLoading {
-            VStack(spacing: 0) {
-                sectionHeader
-                    .padding(.horizontal)
-                Spacer()
-            }
-            .frame(maxWidth: .infinity)
         }
-    }
-
-    @ViewBuilder
-    private var sectionHeader: some View {
-        Text(\.trending_title)
-            .font(.system(size: 35, weight: .bold))
-            .foregroundStyle(Color.themePrimary)
-            .padding(.top, 20)
-            .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
-struct TrendRepositoryCell: View {
-    let rank: Int
-    let repo: GitHubRepo
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 0) {
-            Text("#\(rank)")
-                .font(.system(size: 16, weight: .bold))
-                .foregroundStyle(Color.themeAccent)
-                .frame(width: 40, alignment: .center)
-
-            GitHubRepositoryCell(repo: repo)
-        }
-        .listRowInsets(EdgeInsets())
-        .listRowSeparator(.hidden)
     }
 }
 

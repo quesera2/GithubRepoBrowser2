@@ -3,13 +3,28 @@ import Shared
 
 struct GitHubRepositoryCell: View {
     let repo: GitHubRepo
-    
+    var rank: Int?
+
+    private var ownerName: String {
+        repo.fullName.components(separatedBy: "/").first ?? ""
+    }
+
     var body: some View {
-        ZStack(alignment: .bottom) {
+        GroupBox {
             VStack(alignment: .leading, spacing: 8) {
-                Text(repo.name)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Color.themeLink)
+                HStack(alignment: .center, spacing: 8) {
+                    if let rank {
+                        rankBox(rank)
+                    }
+
+                    (Text(ownerName).foregroundStyle(.themeSecondary)
+                     + Text("/").foregroundStyle(.themeOutline)
+                     + Text(repo.name)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.themeLink))
+                    .font(.system(size: 16))
+                    .lineLimit(1)
+                }
 
                 if let description = repo.description_ {
                     Text(description)
@@ -18,48 +33,75 @@ struct GitHubRepositoryCell: View {
                         .lineLimit(2)
                 }
 
-                HStack(spacing: 14) {
+                HStack(spacing: 8) {
                     if let language = repo.language {
-                        HStack(spacing: 4) {
+                        metaChip {
                             Circle()
                                 .foregroundStyle(Color.languageColor(language))
-                                .frame(width: 10, height: 10)
+                                .frame(width: 8, height: 8)
 
                             Text(language)
-                                .font(.system(size: 12, weight: .regular))
-                                .foregroundStyle(Color.themeSecondary)
                         }
                     }
 
-                    detailLabel(.iconStar, label: repo.stars.formatCount().localized())
+                    metaChip {
+                        Image(.iconStar)
+                            .resizable()
+                            .frame(width: 10, height: 10)
+                            .foregroundStyle(.themeAccent)
 
-                    detailLabel(.iconFork, label: repo.forks.formatCount().localized())
+                        Text(repo.stars.formatCount().localized())
+                    }
+
+                    metaChip {
+                        Image(.iconFork)
+                            .resizable()
+                            .frame(width: 10, height: 10)
+                            .foregroundStyle(.themeSecondary)
+
+                        Text(repo.forks.formatCount().localized())
+                    }
                 }
+                .font(.system(size: 12, weight: .regular))
+                .foregroundStyle(.themeSecondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 14)
-            
-            Divider()
-                  .overlay(.themeOutline)
-
         }
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(.themeOutlineVariant, lineWidth: 1)
+        )
         .listRowInsets(EdgeInsets())
         .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
         .frame(minHeight: 44)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 16)
+        .backgroundStyle(.themeSurface)
     }
-    
-    
+
+    private func rankBox(_ rank: Int) -> some View {
+        let (bgColor, textColor): (Color, Color) = rank <= 3
+            ? (.themeAccent, .themeOnAccent)
+            : (.themeLink, .themeOnLink)
+
+        return Text(rank.description)
+            .font(.system(size: 11, weight: .medium))
+            .foregroundStyle(textColor)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
+            .frame(minWidth: 24, minHeight: 20)
+            .background(bgColor, in: RoundedRectangle(cornerRadius: 6))
+    }
+
     @ViewBuilder
-    private func detailLabel(_ image: SwiftUI.ImageResource, label: String) -> some View {
+    private func metaChip<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         HStack(spacing: 4) {
-            Image(image)
-                .foregroundStyle(Color.themeAccent)
-            
-            Text(label)
-                .font(.system(size: 12, weight: .regular))
-                .foregroundStyle(Color.themeSecondary)
+            content()
         }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(.themeSurfaceVariant, in: RoundedRectangle(cornerRadius: 6))
     }
 }
 

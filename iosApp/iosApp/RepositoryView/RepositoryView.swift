@@ -37,7 +37,7 @@ struct RepositoryViewContent: View {
     
     var body: some View {
         content
-            .navigationBarHidden(true)
+            .navigationTitle(Text(\.search_title))
             .searchable(
                 text: $searchText,
                 isPresented: $isSearchPresented,
@@ -56,7 +56,7 @@ struct RepositoryViewContent: View {
                 onDismissError: onDismissError
             )
     }
-
+    
     private func repoErrorMessage(_ error: RepoError?) -> StringResource? {
         guard let error else { return nil }
         switch onEnum(of: error) {
@@ -68,20 +68,6 @@ struct RepositoryViewContent: View {
             return MR.strings().unknown_error
         }
     }
-
-    @ViewBuilder
-    private var sectionHeader: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(\.search_title)
-                .font(.system(size: 35, weight: .bold))
-                .foregroundStyle(Color.themePrimary)
-            Text(\.search_subtitle)
-                .font(.system(size: 15, weight: .regular))
-                .foregroundStyle(Color.themeSecondary)
-        }
-        .padding(.top, 20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
     
     @ViewBuilder
     private var content: some View {
@@ -92,41 +78,29 @@ struct RepositoryViewContent: View {
                 ProgressView()
             }
         }
-
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.themeBackground)
     }
     
     @ViewBuilder
     private func repoListContent(repos: [GitHubRepo]?, isLoading: Bool) -> some View {
         if let repos {
             if repos.isEmpty {
-                VStack(spacing: 0) {
-                    sectionHeader
-                        .padding(.horizontal)
-                    Spacer()
-                    Text(\.no_repositories_found)
-                        .font(.system(size: 15, weight: .regular))
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                }
+                Text(\.no_repositories_found)
+                    .font(.system(size: 15, weight: .regular))
+                    .foregroundStyle(.secondary)
             } else {
                 List {
                     Section {
                         ForEach(repos, id: \.id) { repo in
                             GitHubRepositoryCell(repo: repo)
                         }
-                    } header: {
-                        sectionHeader
-                            .textCase(nil)
-                            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 8, trailing: 16))
                     }
                 }
-                .listStyle(.plain)
-                .contentMargins(.top, 0, for: .scrollContent)
+                .repoListStyle()
             }
         } else {
             VStack(spacing: 0) {
-                sectionHeader
-                    .padding(.horizontal)
                 if !isLoading {
                     emptyView
                         .padding(.top, 60)
@@ -143,11 +117,11 @@ struct RepositoryViewContent: View {
             Image(.iconSearch)
                 .resizable()
                 .frame(width: 44, height: 44)
-                .foregroundStyle(Color.themePlaceholder)
+                .foregroundStyle(.themePlaceholder)
             
             Text(\.search_for_user)
                 .font(.system(size: 15, weight: .regular))
-                .foregroundStyle(Color.themePlaceholder)
+                .foregroundStyle(.themePlaceholder)
         }
     }
     
