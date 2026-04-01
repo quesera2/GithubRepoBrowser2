@@ -72,7 +72,7 @@ struct RepositoryViewContent: View {
     @ViewBuilder
     private var content: some View {
         ZStack {
-            repoListContent(repos: state.repos, isLoading: state.isLoading)
+            repoListContent(user: state.user, repos: state.repos, isLoading: state.isLoading)
             
             if state.isLoading {
                 ProgressView()
@@ -83,14 +83,20 @@ struct RepositoryViewContent: View {
     }
     
     @ViewBuilder
-    private func repoListContent(repos: [GitHubRepo]?, isLoading: Bool) -> some View {
-        if let repos {
+    private func repoListContent(user: GitHubUser?, repos: [GitHubRepo]?, isLoading: Bool) -> some View {
+        if let repos, let user {
             if repos.isEmpty {
                 Text(\.no_repositories_found)
                     .font(.system(size: 15, weight: .regular))
                     .foregroundStyle(.secondary)
             } else {
                 List {
+                    Section {
+                        UserHeaderView(user: user)
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                    }
                     Section {
                         ForEach(repos, id: \.id) { repo in
                             GitHubRepositoryCell(repo: repo)
