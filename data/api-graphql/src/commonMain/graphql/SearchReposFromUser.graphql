@@ -1,0 +1,21 @@
+query SearchReposFromUser($userName: String!, $perPage: Int!, $sort: RepositoryOrder!) {
+    user(login: $userName) {
+        name
+        login
+        avatarUrl
+        repositories(first: $perPage, orderBy: $sort) {
+            nodes {
+                id
+                name
+                nameWithOwner
+                description
+                stargazerCount
+                forkCount
+                primaryLanguage {
+                    name
+                }
+                url
+            }
+        }
+    }
+}

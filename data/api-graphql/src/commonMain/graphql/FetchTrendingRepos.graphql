@@ -1,0 +1,23 @@
+query SearchTrendingRepos($query: String!, $perPage: Int!, $after: String) {
+    search(query: $query, type: REPOSITORY, first: $perPage, after: $after) {
+        repositoryCount
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
+        nodes {
+            ... on Repository {
+                id
+                name
+                nameWithOwner
+                description
+                stargazerCount
+                forkCount
+                primaryLanguage {
+                    name
+                }
+                url
+            }
+        }
+    }
+}

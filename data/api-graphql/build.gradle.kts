@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
+    alias(libs.plugins.apollo)
 }
 
 kotlin {
@@ -22,6 +23,13 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.data.api)
             implementation(projects.domain.model)
+            implementation(libs.apollo.runtime)
         }
+    }
+}
+
+apollo {
+    service("service") {
+        packageName.set("que.sera.sera.githubbrowser2.data.api.graphql")
     }
 }
