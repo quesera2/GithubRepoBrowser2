@@ -20,7 +20,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.io.IOException
 import kotlinx.serialization.json.Json
 
-class GitHubApiTest : DescribeSpec({
+class GitHubApiKtorImplTest : DescribeSpec({
     lateinit var testJson: Json
     lateinit var api: GitHubApi
 
@@ -145,7 +145,7 @@ class GitHubApiTest : DescribeSpec({
         private fun setupApi(
             json: Json,
             engine: HttpClientEngine,
-        ) = GitHubApi(
+        ) = GitHubApiKtorImpl(
             httpClient = HttpClient(engine) {
                 expectSuccess = true
                 install(ContentNegotiation) { json(json) }

@@ -50,6 +50,8 @@ kotlin {
             implementation(projects.feature.trending)
             implementation(projects.data.repository)
             implementation(projects.data.api)
+            implementation(projects.data.apiKtor)
+            implementation(projects.data.apiGraphql)
             implementation(projects.domain.contract)
             implementation(projects.domain.model)
             implementation(libs.metro.runtime)

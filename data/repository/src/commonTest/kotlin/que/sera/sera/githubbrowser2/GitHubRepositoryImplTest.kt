@@ -5,87 +5,69 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
+import io.ktor.client.plugins.ResponseException
+import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.URLProtocol
-import io.ktor.http.headersOf
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.serialization.JsonConvertException
 import kotlinx.io.IOException
-import kotlinx.serialization.json.Json
 
 class GitHubRepositoryImplTest : DescribeSpec({
-    val testJson = Json { ignoreUnknownKeys = true }
-
-    fun buildRepository(engine: MockEngine): GitHubRepositoryImpl {
-        val client = HttpClient(engine) {
-            expectSuccess = true
-            install(ContentNegotiation) { json(testJson) }
-            defaultRequest {
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = "api.github.com"
-                }
-            }
-        }
-        return GitHubRepositoryImpl(GitHubApi(client))
-    }
-
     describe("fetchUser") {
         context("IOExceptionが発生したとき") {
             it("RepositoryExceptionにラップされる") {
-                val repository = buildRepository(MockEngine { throw IOException("network error") })
-                shouldThrow<RepositoryException> {
-                    repository.fetchUser("testuser")
-                }
+                val repository = GitHubRepositoryImpl(
+                    FakeGitHubApi { throw IOException("network error") }
+                )
+                shouldThrow<RepositoryException> { repository.fetchUser("testuser") }
             }
         }
 
-        context("200 OKが返ったがJSONが不正だった場合") {
+        context("JsonConvertExceptionが発生したとき") {
             it("RepositoryExceptionにラップされる") {
-                val repository = buildRepository(MockEngine {
-                    respond(
-                        content = """{"message":"ok"}""",
-                        status = HttpStatusCode.OK,
-                        headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
-                    )
-                })
-                shouldThrow<RepositoryException> {
-                    repository.fetchUser("testuser")
-                }
+                val repository = GitHubRepositoryImpl(
+                    FakeGitHubApi { throw JsonConvertException("bad json") }
+                )
+                shouldThrow<RepositoryException> { repository.fetchUser("testuser") }
             }
         }
 
         context("404 Not Foundが返ったとき") {
             it("RepositoryExceptionにラップされる") {
-                val repository = buildRepository(MockEngine {
-                    respond(
-                        content = """{"message":"Not Found"}""",
-                        status = HttpStatusCode.NotFound,
-                        headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
-                    )
-                })
-                shouldThrow<RepositoryException> {
-                    repository.fetchUser("testuser")
-                }
+                val exception = createResponseException(HttpStatusCode.NotFound)
+                val repository = GitHubRepositoryImpl(FakeGitHubApi { throw exception })
+                shouldThrow<RepositoryException> { repository.fetchUser("testuser") }
             }
         }
 
         context("500 Internal Server Errorが返ったとき") {
             it("RepositoryExceptionにラップされる") {
-                val repository = buildRepository(MockEngine {
-                    respond(
-                        content = """{"message":"Internal Server Error"}""",
-                        status = HttpStatusCode.InternalServerError,
-                        headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
-                    )
-                })
-                shouldThrow<RepositoryException> {
-                    repository.fetchUser("testuser")
-                }
+                val exception = createResponseException(HttpStatusCode.InternalServerError)
+                val repository = GitHubRepositoryImpl(FakeGitHubApi { throw exception })
+                shouldThrow<RepositoryException> { repository.fetchUser("testuser") }
             }
         }
     }
-})
+}) {
+    companion object {
+        private class FakeGitHubApi(
+            private val onFetchUser: suspend (String) -> GitHubUser,
+        ) : GitHubApi {
+            override suspend fun fetchUser(username: String): GitHubUser = onFetchUser(username)
+            override suspend fun fetchRepos(username: String, perPage: Int, sort: String) = emptyList<GitHubRepo>()
+            override suspend fun fetchTrendingRepos(language: String?, perPage: Int, page: Int) = GitHubSearchResult(0, emptyList())
+        }
+
+        private suspend fun createResponseException(statusCode: HttpStatusCode): ResponseException {
+            val engine = MockEngine { respond("error", status = statusCode) }
+            val client = HttpClient(engine) { expectSuccess = true }
+            return try {
+                client.get("https://api.github.com/test")
+                error("unreachable")
+            } catch (e: ResponseException) {
+                e
+            } finally {
+                client.close()
+            }
+        }
+    }
+}

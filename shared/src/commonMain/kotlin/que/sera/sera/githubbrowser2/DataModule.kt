@@ -32,5 +32,5 @@ interface DataModule {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideGitHubApi(httpClient: HttpClient): GitHubApi = GitHubApi(httpClient)
+    fun provideGitHubApi(httpClient: HttpClient): GitHubApi = GitHubApiKtorImpl(httpClient)
 }
