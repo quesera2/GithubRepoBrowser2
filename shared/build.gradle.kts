@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -6,6 +8,7 @@ plugins {
     alias(libs.plugins.metro)
     alias(libs.plugins.skie)
     alias(libs.plugins.mokoResources)
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -59,6 +62,7 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.apollo.runtime)
         }
         androidMain.dependencies {
             implementation(libs.metro.viewmodel)
@@ -72,5 +76,15 @@ kotlin {
             api(projects.domain.contract)
             api(libs.moko.resources)
         }
+    }
+}
+
+buildkonfig {
+    packageName = "que.sera.sera.githubbrowser2.shared"
+
+    defaultConfigs {
+        val token = gradleLocalProperties(rootDir, providers)
+            .getProperty("github.token") ?: ""
+        buildConfigField(FieldSpec.Type.STRING, "GITHUB_TOKEN", token)
     }
 }

@@ -63,8 +63,8 @@ class GitHubApiGraphQLImpl(
         val since = Clock.System.todayIn(TimeZone.UTC).minus(1, DateTimeUnit.MONTH)
         val query = buildString {
             append("pushed:>$since")
-            if (language != null) append("+language:$language")
-            append("+sort:stars-desc")
+            if (language != null) append(" language:$language")
+            append(" sort:stars-desc")
         }
         val apolloQuery = FetchTrendingReposQuery(
             query = query,

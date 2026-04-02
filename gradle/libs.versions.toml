@@ -20,6 +20,7 @@ mokoResources = "0.26.1"
 androidx-navigation3 = "1.0.1"
 coil = "3.4.0"
 apollo = "4.4.2"
+buildkonfig = "0.17.1"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
@@ -70,3 +71,4 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 mokoResources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "mokoResources" }
 apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
