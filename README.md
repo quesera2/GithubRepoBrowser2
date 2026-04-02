@@ -51,11 +51,13 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 
 ## 事前準備
 
-GitHub の GraphQL API を使用するため、Personal Access Token が必要です。
-
-プロジェクトルートに `local.properties` を作成し、以下を追記してください。
+プロジェクトルートに `local.properties` を作成し、以下を設定してください。
 
 ```properties
+# 使用する API 実装（rest / graphql、省略時は rest）
+api.impl=rest
+
+# GitHub Personal Access Token（graphqlの場合は必須）
 github.token=ghp_xxxxxxxxxxxx
 ```
 

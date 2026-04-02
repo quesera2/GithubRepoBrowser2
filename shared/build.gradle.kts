@@ -46,23 +46,33 @@ kotlin {
     }
 
     sourceSets {
-        commonMain.dependencies {
-            implementation(projects.feature.common)
-            implementation(projects.feature.resources)
-            implementation(projects.feature.search)
-            implementation(projects.feature.trending)
-            implementation(projects.data.repository)
-            implementation(projects.data.api)
-            implementation(projects.data.apiKtor)
-            implementation(projects.data.apiGraphql)
-            implementation(projects.domain.contract)
-            implementation(projects.domain.model)
-            implementation(libs.metro.runtime)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.apollo.runtime)
+        commonMain {
+            val localProperties = gradleLocalProperties(rootDir, providers)
+            val apiImpl = localProperties.getProperty("api.impl") ?: "rest"
+            kotlin.srcDir("src/commonMain-$apiImpl/kotlin")
+            dependencies {
+                implementation(projects.feature.common)
+                implementation(projects.feature.resources)
+                implementation(projects.feature.search)
+                implementation(projects.feature.trending)
+                implementation(projects.data.repository)
+                implementation(projects.data.api)
+
+                implementation(projects.domain.contract)
+                implementation(projects.domain.model)
+                implementation(libs.metro.runtime)
+
+                if (apiImpl == "graphql") {
+                    implementation(projects.data.apiGraphql)
+                    implementation(libs.apollo.runtime)
+                } else {
+                    implementation(projects.data.apiKtor)
+                    implementation(libs.kotlinx.serialization.json)
+                    implementation(libs.ktor.client.core)
+                    implementation(libs.ktor.client.content.negotiation)
+                    implementation(libs.ktor.serialization.kotlinx.json)
+                }
+            }
         }
         androidMain.dependencies {
             implementation(libs.metro.viewmodel)

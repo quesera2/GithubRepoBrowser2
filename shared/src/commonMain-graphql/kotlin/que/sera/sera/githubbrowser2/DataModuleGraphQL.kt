@@ -4,11 +4,12 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.http.HttpHeader
 import com.apollographql.apollo.network.http.HeadersInterceptor
 import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
 import que.sera.sera.githubbrowser2.shared.BuildKonfig
 
-//@ContributesTo(AppScope::class)
+@ContributesTo(AppScope::class)
 interface DataModuleGraphQL {
     @Provides
     @SingleIn(AppScope::class)
