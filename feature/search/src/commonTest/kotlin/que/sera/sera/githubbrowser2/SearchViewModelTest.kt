@@ -162,7 +162,7 @@ class SearchViewModelTest : DescribeSpec({
 
 private val SAMPLE_REPOS = listOf(
     GitHubRepo(
-        id = 1,
+        id = "1",
         name = "sample-repo",
         fullName = "user/sample-repo",
         description = "サンプル",

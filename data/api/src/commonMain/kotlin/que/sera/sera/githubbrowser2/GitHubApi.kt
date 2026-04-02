@@ -3,20 +3,15 @@ package que.sera.sera.githubbrowser2
 interface GitHubApi {
 
     /**
-     * ユーザー情報からアバターと表示名を取得
-     */
-    suspend fun fetchUser(username: String): GitHubUser
-
-    /**
-     * 指定した[username]のリポジトリを最大100件取得する
+     * 指定した[username]のユーザー情報からアバターと表示名、リポジトリを[perPage]件取得する
      *
      * Paging3を使おうと考えたがSwiftUIでハンドリングする方法がほとんど提供されてないので一旦スルー
      */
-    suspend fun fetchRepos(
+    suspend fun searchReposFromUser(
         username: String,
         perPage: Int = 100,
-        sort: String = "updated"
-    ): List<GitHubRepo>
+        sort: SortOrder = SortOrder.UPDATED_AT
+    ): Pair<GitHubUser, List<GitHubRepo>>
 
     /**
      * 直近1ヶ月以内に push されたリポジトリをスター数降順で返す

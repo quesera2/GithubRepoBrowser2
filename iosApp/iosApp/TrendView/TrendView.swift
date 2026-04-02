@@ -87,7 +87,7 @@ struct TrendViewContent: View {
 
 private let sampleRepos: [GitHubRepo] = [
     GitHubRepo(
-        id: 1,
+        id: "1",
         name: "kotlin",
         fullName: "JetBrains/kotlin",
         description: "The Kotlin Programming Language",
@@ -97,7 +97,7 @@ private let sampleRepos: [GitHubRepo] = [
         htmlUrl: "https://github.com/JetBrains/kotlin"
     ),
     GitHubRepo(
-        id: 2,
+        id: "2",
         name: "swift",
         fullName: "apple/swift",
         description: "The Swift Programming Language",
@@ -107,7 +107,7 @@ private let sampleRepos: [GitHubRepo] = [
         htmlUrl: "https://github.com/apple/swift"
     ),
     GitHubRepo(
-        id: 3,
+        id: "3",
         name: "linux",
         fullName: "torvalds/linux",
         description: nil,
