@@ -24,6 +24,7 @@ kotlin {
             implementation(projects.data.api)
             implementation(projects.domain.model)
             implementation(libs.apollo.runtime)
+            implementation(libs.kotlinx.datetime)
         }
     }
 }

@@ -199,7 +199,7 @@ private fun PreviewRepoListViewItem() {
         ) {
             RepoListViewItem(
                 repo = GitHubRepo(
-                    id = 1,
+                    id = "1",
                     name = "kotlin",
                     fullName = "JetBrains/kotlin",
                     description = "The Kotlin Programming Language The Kotlin Programming Language The Kotlin Programming Language",
@@ -212,7 +212,7 @@ private fun PreviewRepoListViewItem() {
 
             RepoListViewItem(
                 repo = GitHubRepo(
-                    id = 2,
+                    id = "2",
                     name = "dotfiles",
                     fullName = "user/dotfiles",
                     description = null,
@@ -226,7 +226,7 @@ private fun PreviewRepoListViewItem() {
             RepoListViewItem(
                 rank = 1,
                 repo = GitHubRepo(
-                    id = 1,
+                    id = "1",
                     name = "kotlin",
                     fullName = "JetBrains/kotlin",
                     description = "The Kotlin Programming Language",
@@ -240,7 +240,7 @@ private fun PreviewRepoListViewItem() {
             RepoListViewItem(
                 rank = 4,
                 repo = GitHubRepo(
-                    id = 2,
+                    id = "2",
                     name = "dotfiles",
                     fullName = "user/dotfiles",
                     description = null,

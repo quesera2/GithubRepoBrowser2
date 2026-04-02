@@ -1,4 +1,4 @@
-query SearchTrendingRepos($query: String!, $perPage: Int!, $after: String) {
+query FetchTrendingRepos($query: String!, $perPage: Int!, $after: String) {
     search(query: $query, type: REPOSITORY, first: $perPage, after: $after) {
         repositoryCount
         pageInfo {
