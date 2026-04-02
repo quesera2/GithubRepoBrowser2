@@ -37,7 +37,7 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 │   ├── api/             # API クライアント（Ktor）
 │   └── repository/      # リポジトリ実装
 ├── feature/
-│   └── repoview/        # ViewModel + UI 状態
+│   └── search/          # ViewModel + UI 状態
 ├── androidApp/          # Android アプリ（Jetpack Compose）
 └── iosApp/              # iOS アプリ（SwiftUI）
 ```

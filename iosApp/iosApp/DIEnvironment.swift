@@ -3,8 +3,8 @@ import Shared
 
 // MARK: - GitHubAPIClient
 
-private struct RepoViewModelKey: EnvironmentKey {
-    static var defaultValue: RepoViewModel? = nil
+private struct SearchViewModelKey: EnvironmentKey {
+    static var defaultValue: SearchViewModel? = nil
 }
 
 private struct TrendViewModelKey: EnvironmentKey {
@@ -12,9 +12,9 @@ private struct TrendViewModelKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-    var repoViewModel: RepoViewModel? {
-        get { self[RepoViewModelKey.self] }
-        set { self[RepoViewModelKey.self] = newValue }
+    var searchViewModel: SearchViewModel? {
+        get { self[SearchViewModelKey.self] }
+        set { self[SearchViewModelKey.self] = newValue }
     }
 
     var trendViewModel: TrendViewModel? {

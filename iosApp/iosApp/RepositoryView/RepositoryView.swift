@@ -2,9 +2,9 @@ import SwiftUI
 import Shared
 
 struct RepositoryView: View {
-    @Environment(\.repoViewModel) private var vm: RepoViewModel?
+    @Environment(\.searchViewModel) private var vm: SearchViewModel?
     
-    @State private var state: RepoViewState = RepoViewState.companion.initialState
+    @State private var state: SearchViewState = SearchViewState.companion.initialState
     
     var body: some View {
         if let vm {
@@ -28,7 +28,7 @@ struct RepositoryView: View {
 
 struct RepositoryViewContent: View {
     
-    var state: RepoViewState
+    var state: SearchViewState
     var onSearch: (String) -> Void
     var onDismissError: () -> Void
     
@@ -57,7 +57,7 @@ struct RepositoryViewContent: View {
             )
     }
     
-    private func repoErrorMessage(_ error: RepoError?) -> StringResource? {
+    private func repoErrorMessage(_ error: SearchViewError?) -> StringResource? {
         guard let error else { return nil }
         switch onEnum(of: error) {
         case .emptyUsername:
@@ -177,7 +177,7 @@ private let sampleRepos: [GitHubRepo] = [
 #Preview("Idle") {
     NavigationStack {
         RepositoryViewContent(
-            state: RepoViewState.companion.initialState,
+            state: SearchViewState.companion.initialState,
             onSearch: { _ in },
             onDismissError: {}
         )
@@ -187,7 +187,7 @@ private let sampleRepos: [GitHubRepo] = [
 #Preview("Loading") {
     NavigationStack {
         RepositoryViewContent(
-            state: RepoViewState.companion.initialState.loading(),
+            state: SearchViewState.companion.initialState.loading(),
             onSearch: { _ in },
             onDismissError: {}
         )
@@ -197,7 +197,7 @@ private let sampleRepos: [GitHubRepo] = [
 #Preview("Success") {
     NavigationStack {
         RepositoryViewContent(
-            state: RepoViewState.companion.initialState
+            state: SearchViewState.companion.initialState
                 .success(user: sampleUser, repos: sampleRepos),
             onSearch: { _ in },
             onDismissError: {}
@@ -208,7 +208,7 @@ private let sampleRepos: [GitHubRepo] = [
 #Preview("Success - Empty") {
     NavigationStack {
         RepositoryViewContent(
-            state: RepoViewState.companion.initialState
+            state: SearchViewState.companion.initialState
                 .success(user: sampleUser, repos: []),
             onSearch: { _ in },
             onDismissError: {}
@@ -219,9 +219,9 @@ private let sampleRepos: [GitHubRepo] = [
 #Preview("Error - CanRetry") {
     NavigationStack {
         RepositoryViewContent(
-            state: RepoViewState.companion.initialState
+            state: SearchViewState.companion.initialState
                 .failure(errorMessage: ErrorMessageCanRetry(
-                    error: RepoError.NetworkError.shared,
+                    error: SearchViewError.NetworkError.shared,
                     retryAction: {}
                 )),
             onSearch: { _ in },
@@ -233,9 +233,9 @@ private let sampleRepos: [GitHubRepo] = [
 #Preview("Error - CancelOnly") {
     NavigationStack {
         RepositoryViewContent(
-            state: RepoViewState.companion.initialState
+            state: SearchViewState.companion.initialState
                 .failure(errorMessage: ErrorMessageCancelOnly(
-                    error: RepoError.EmptyUsername.shared
+                    error: SearchViewError.NetworkErrror.shared
                 )),
             onSearch: { _ in },
             onDismissError: {}

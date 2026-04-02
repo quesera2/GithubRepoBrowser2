@@ -2,17 +2,17 @@ package que.sera.sera.githubbrowser2
 
 import kotlin.native.ObjCName
 
-data class RepoViewState(
+data class SearchViewState(
     val isLoading: Boolean = false,
     val user: GitHubUser? = null,
     val repos: List<GitHubRepo>? = null,
-    val errorMessage: ErrorMessage<RepoError>? = null,
+    val errorMessage: ErrorMessage<SearchViewError>? = null,
 ) {
     companion object {
         @OptIn(kotlin.experimental.ExperimentalObjCName::class)
         @ObjCName(swiftName = "initialState")
         @Suppress("unused") // Used from Swift
-        val INITIAL_STATE = RepoViewState()
+        val INITIAL_STATE = SearchViewState()
     }
 
     val isError: Boolean
@@ -34,7 +34,7 @@ data class RepoViewState(
         errorMessage = null
     )
 
-    fun failure(errorMessage: ErrorMessage<RepoError>) = copy(
+    fun failure(errorMessage: ErrorMessage<SearchViewError>) = copy(
         isLoading = false,
         errorMessage = errorMessage,
     )

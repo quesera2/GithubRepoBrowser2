@@ -33,7 +33,7 @@ dependencies {
     implementation(projects.shared)
     implementation(projects.feature.common)
     implementation(projects.feature.resources)
-    implementation(projects.feature.repoview)
+    implementation(projects.feature.search)
     implementation(projects.feature.trending)
     implementation(projects.domain.model)
     implementation(libs.metro.runtime)

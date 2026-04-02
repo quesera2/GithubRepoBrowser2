@@ -8,7 +8,7 @@
     <string name="network_error">Network error</string>
     <string name="format_over_kilo">%d.%dk</string>
 
-    <!-- repoview -->
+    <!-- search -->
     <string name="search_title">Search</string>
     <string name="search_placeholder">Search username</string>
     <string name="no_repositories_found">No repositories found</string>

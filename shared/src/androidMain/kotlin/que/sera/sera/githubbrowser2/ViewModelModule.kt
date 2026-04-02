@@ -11,8 +11,8 @@ import dev.zacsweers.metrox.viewmodel.ViewModelKey
 actual interface ViewModelModule {
     @Provides
     @IntoMap
-    @ViewModelKey(RepoViewModel::class)
-    fun provideHomeViewModel(viewModel: RepoViewModel): ViewModel = viewModel
+    @ViewModelKey(SearchViewModel::class)
+    fun provideHomeViewModel(viewModel: SearchViewModel): ViewModel = viewModel
 
     @Provides
     @IntoMap

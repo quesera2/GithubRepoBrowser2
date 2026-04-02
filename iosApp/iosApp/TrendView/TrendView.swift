@@ -40,7 +40,7 @@ struct TrendViewContent: View {
             )
     }
     
-    private func trendErrorMessage(_ error: TrendError?) -> StringResource? {
+    private func trendErrorMessage(_ error: TrendViewError?) -> StringResource? {
         guard let error else { return nil }
         switch onEnum(of: error) {
         case .networkError:
@@ -146,7 +146,7 @@ private let sampleRepos: [GitHubRepo] = [
     TrendViewContent(
         state: TrendViewState.companion.initialState.failure(
             errorMessage: ErrorMessageCanRetry(
-                error: TrendError.NetworkError.shared,
+                error: TrendViewError.NetworkError.shared,
                 retryAction: {}
             )
         ),

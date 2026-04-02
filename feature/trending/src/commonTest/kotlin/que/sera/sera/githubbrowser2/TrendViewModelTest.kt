@@ -84,8 +84,8 @@ class TrendViewModelTest : DescribeSpec({
                             viewModel.fetchTrending()
                             awaitItem() // ローディング中
                             val state = awaitItem()
-                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<TrendError>>()
-                            error.error shouldBe TrendError.NetworkError
+                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<TrendViewError>>()
+                            error.error shouldBe TrendViewError.NetworkError
                             cancelAndIgnoreRemainingEvents()
                         }
                     }
@@ -104,8 +104,8 @@ class TrendViewModelTest : DescribeSpec({
                             viewModel.fetchTrending()
                             awaitItem() // ローディング中
                             val state = awaitItem()
-                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<TrendError>>()
-                            error.error shouldBe TrendError.UnknownError
+                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<TrendViewError>>()
+                            error.error shouldBe TrendViewError.UnknownError
                             cancelAndIgnoreRemainingEvents()
                         }
                     }
