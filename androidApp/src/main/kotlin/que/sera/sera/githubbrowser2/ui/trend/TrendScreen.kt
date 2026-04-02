@@ -36,7 +36,7 @@ import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.serialization.Serializable
 import que.sera.sera.githubbrowser2.ErrorMessage
 import que.sera.sera.githubbrowser2.GitHubRepo
-import que.sera.sera.githubbrowser2.TrendError
+import que.sera.sera.githubbrowser2.TrendViewError
 import que.sera.sera.githubbrowser2.MR
 import que.sera.sera.githubbrowser2.TrendViewModel
 import que.sera.sera.githubbrowser2.TrendViewState
@@ -140,8 +140,8 @@ private fun TrendContent(
 
             uiState.errorMessage?.let { errorMessage ->
                 val message = when (val error = errorMessage.error) {
-                    is TrendError.NetworkError -> stringResource(MR.strings.network_error)
-                    is TrendError.UnknownError -> stringResource(MR.strings.unknown_error)
+                    is TrendViewError.NetworkError -> stringResource(MR.strings.network_error)
+                    is TrendViewError.UnknownError -> stringResource(MR.strings.unknown_error)
                 }
                 ErrorDialog(errorMessage = errorMessage, message = message, onDismiss = onDismissErrorDialog)
             }
@@ -165,7 +165,7 @@ private class TrendViewStateProvider : PreviewParameterProvider<TrendViewState> 
         "Loading" to TrendViewState().loading(),
         "Success" to TrendViewState().success(sampleRepos),
         "Empty" to TrendViewState().success(emptyList()),
-        "Error" to TrendViewState().failure(ErrorMessage.CanRetry(TrendError.NetworkError) {}),
+        "Error" to TrendViewState().failure(ErrorMessage.CanRetry(TrendViewError.NetworkError) {}),
     )
     override val values = named.map { it.second }.asSequence()
     override fun getDisplayName(index: Int) = named[index].first

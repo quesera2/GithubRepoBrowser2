@@ -12,17 +12,17 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @Inject
-class RepoViewModel(
+class SearchViewModel(
     private val repository: GitHubRepository
 ) : ViewModel() {
 
-    val state: StateFlow<RepoViewState>
-        field = MutableStateFlow(RepoViewState())
+    val state: StateFlow<SearchViewState>
+        field = MutableStateFlow(SearchViewState())
 
     fun fetchRepos(username: String) {
         if (username.isEmpty()) {
             state.update {
-                it.failure(ErrorMessage.CancelOnly(RepoError.EmptyUsername))
+                it.failure(ErrorMessage.CancelOnly(SearchViewError.EmptyUsername))
             }
             return
         }
@@ -39,11 +39,11 @@ class RepoViewModel(
                 throw e
             } catch (e: RepositoryException) {
                 state.update {
-                    it.failure(ErrorMessage.CanRetry(RepoError.NetworkError) { fetchRepos(username) })
+                    it.failure(ErrorMessage.CanRetry(SearchViewError.NetworkError) { fetchRepos(username) })
                 }
             } catch (e: Exception) {
                 state.update {
-                    it.failure(ErrorMessage.CanRetry(RepoError.UnknownError) { fetchRepos(username) })
+                    it.failure(ErrorMessage.CanRetry(SearchViewError.UnknownError) { fetchRepos(username) })
                 }
             }
         }

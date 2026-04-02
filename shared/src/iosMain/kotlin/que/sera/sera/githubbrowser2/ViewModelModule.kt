@@ -5,6 +5,6 @@ import dev.zacsweers.metro.ContributesTo
 
 @ContributesTo(AppScope::class)
 actual interface ViewModelModule {
-    val repoViewModel: RepoViewModel
+    val searchViewModel: SearchViewModel
     val trendViewModel: TrendViewModel
 }

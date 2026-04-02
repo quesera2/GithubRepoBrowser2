@@ -20,7 +20,7 @@ struct iOSApp: App {
                     }
                 }
             }
-            .environment(\.repoViewModel, graph.repoViewModel)
+            .environment(\.searchViewModel, graph.searchViewModel)
             .environment(\.trendViewModel, graph.trendViewModel)
         }
     }

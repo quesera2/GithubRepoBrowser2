@@ -53,12 +53,12 @@ import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.serialization.Serializable
 import que.sera.sera.githubbrowser2.ErrorMessage
 import que.sera.sera.githubbrowser2.GitHubRepo
-import que.sera.sera.githubbrowser2.RepoError
+import que.sera.sera.githubbrowser2.SearchViewError
 import que.sera.sera.githubbrowser2.GitHubUser
 import que.sera.sera.githubbrowser2.MR
 import que.sera.sera.githubbrowser2.R
-import que.sera.sera.githubbrowser2.RepoViewModel
-import que.sera.sera.githubbrowser2.RepoViewState
+import que.sera.sera.githubbrowser2.SearchViewModel
+import que.sera.sera.githubbrowser2.SearchViewState
 import que.sera.sera.githubbrowser2.ui.component.ErrorDialog
 import que.sera.sera.githubbrowser2.ui.component.RepoListViewItem
 import que.sera.sera.githubbrowser2.ui.theme.GitHubBrowserTheme
@@ -68,7 +68,7 @@ data object RouteSearch : NavKey
 
 @Composable
 fun SearchScreen(
-    viewModel: RepoViewModel = metroViewModel()
+    viewModel: SearchViewModel = metroViewModel()
 ) {
     val uiState by viewModel.state.collectAsState()
     SearchContent(
@@ -81,7 +81,7 @@ fun SearchScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchContent(
-    uiState: RepoViewState,
+    uiState: SearchViewState,
     onSearch: (String) -> Unit,
     onDismissErrorDialog: () -> Unit,
 ) {
@@ -178,9 +178,9 @@ private fun SearchContent(
 
             uiState.errorMessage?.let { errorMessage ->
                 val message = when (val error = errorMessage.error) {
-                    is RepoError.EmptyUsername -> stringResource(MR.strings.please_enter_username)
-                    is RepoError.NetworkError -> stringResource(MR.strings.network_error)
-                    is RepoError.UnknownError -> stringResource(MR.strings.unknown_error)
+                    is SearchViewError.EmptyUsername -> stringResource(MR.strings.please_enter_username)
+                    is SearchViewError.NetworkError -> stringResource(MR.strings.network_error)
+                    is SearchViewError.UnknownError -> stringResource(MR.strings.unknown_error)
                 }
                 ErrorDialog(errorMessage = errorMessage, message = message, onDismiss = onDismissErrorDialog)
             }
@@ -299,7 +299,7 @@ private fun EmptyView() {
 @Preview(showBackground = true)
 @Composable
 private fun PreviewSearch(
-    @PreviewParameter(RepoViewStateProvider::class) uiState: RepoViewState
+    @PreviewParameter(SearchViewStateProvider::class) uiState: SearchViewState
 ) {
     GitHubBrowserTheme {
         SearchContent(
@@ -310,14 +310,14 @@ private fun PreviewSearch(
     }
 }
 
-private class RepoViewStateProvider : PreviewParameterProvider<RepoViewState> {
+private class SearchViewStateProvider : PreviewParameterProvider<SearchViewState> {
     private val named = listOf(
-        "Idle" to RepoViewState(),
-        "Loading" to RepoViewState().loading(),
-        "Success" to RepoViewState().success(sampleUser, sampleRepos),
-        "Empty" to RepoViewState().success(sampleUser, emptyList()),
-        "Retry Error" to RepoViewState().failure(ErrorMessage.CanRetry(RepoError.NetworkError) {}),
-        "Cancel Error" to RepoViewState().failure(ErrorMessage.CancelOnly(RepoError.EmptyUsername)),
+        "Idle" to SearchViewState(),
+        "Loading" to SearchViewState().loading(),
+        "Success" to SearchViewState().success(sampleUser, sampleRepos),
+        "Empty" to SearchViewState().success(sampleUser, emptyList()),
+        "Retry Error" to SearchViewState().failure(ErrorMessage.CanRetry(SearchViewError.NetworkError) {}),
+        "Cancel Error" to SearchViewState().failure(ErrorMessage.CancelOnly(SearchViewError.EmptyUsername)),
     )
     override val values = named.map { it.second }.asSequence()
     override fun getDisplayName(index: Int) = named[index].first

@@ -12,7 +12,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class RepoViewModelTest : DescribeSpec({
+class SearchViewModelTest : DescribeSpec({
     val testDispatcher = StandardTestDispatcher()
 
     beforeEach {
@@ -27,14 +27,14 @@ class RepoViewModelTest : DescribeSpec({
         context("ユーザー名が空文字の場合") {
             it("CancelOnlyエラーが設定される") {
                 runTest(testDispatcher.scheduler) {
-                    val viewModel = RepoViewModel(FakeGitHubRepository())
+                    val viewModel = SearchViewModel(FakeGitHubRepository())
 
                     viewModel.state.test {
                         awaitItem() // 初期状態
                         viewModel.fetchRepos("")
                         val error =
-                            awaitItem().errorMessage.shouldBeInstanceOf<ErrorMessage.CancelOnly<RepoError>>()
-                        error.error shouldBe RepoError.EmptyUsername
+                            awaitItem().errorMessage.shouldBeInstanceOf<ErrorMessage.CancelOnly<SearchViewError>>()
+                        error.error shouldBe SearchViewError.EmptyUsername
                         cancelAndIgnoreRemainingEvents()
                     }
                 }
@@ -44,7 +44,7 @@ class RepoViewModelTest : DescribeSpec({
         context("リポジトリ取得中の場合") {
             it("ローディング状態になる") {
                 runTest(testDispatcher.scheduler) {
-                    val viewModel = RepoViewModel(FakeGitHubRepository())
+                    val viewModel = SearchViewModel(FakeGitHubRepository())
 
                     viewModel.state.test {
                         awaitItem() // 初期状態
@@ -61,7 +61,7 @@ class RepoViewModelTest : DescribeSpec({
             it("ローディング表示を行うこと") {
                 runTest(testDispatcher.scheduler) {
                     val viewModel =
-                        RepoViewModel(FakeGitHubRepository(Result.success(SAMPLE_REPOS)))
+                        SearchViewModel(FakeGitHubRepository(Result.success(SAMPLE_REPOS)))
 
                     viewModel.state.test {
                         awaitItem().isLoading shouldBe false // 初期状態
@@ -76,7 +76,7 @@ class RepoViewModelTest : DescribeSpec({
             it("ユーザーとリポジトリ一覧が設定される") {
                 runTest(testDispatcher.scheduler) {
                     val viewModel =
-                        RepoViewModel(FakeGitHubRepository(Result.success(SAMPLE_REPOS)))
+                        SearchViewModel(FakeGitHubRepository(Result.success(SAMPLE_REPOS)))
 
                     viewModel.state.test {
                         awaitItem() // 初期状態
@@ -96,7 +96,7 @@ class RepoViewModelTest : DescribeSpec({
             context("ネットワークエラーの場合") {
                 it("NetworkErrorのCanRetryエラーが設定される") {
                     runTest(testDispatcher.scheduler) {
-                        val viewModel = RepoViewModel(
+                        val viewModel = SearchViewModel(
                             FakeGitHubRepository(Result.failure(RepositoryException()))
                         )
 
@@ -105,8 +105,8 @@ class RepoViewModelTest : DescribeSpec({
                             viewModel.fetchRepos("quesera2")
                             awaitItem() // ローディング中
                             val state = awaitItem()
-                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<RepoError>>()
-                            error.error shouldBe RepoError.NetworkError
+                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<SearchViewError>>()
+                            error.error shouldBe SearchViewError.NetworkError
                             state.isLoading shouldBe false
                             cancelAndIgnoreRemainingEvents()
                         }
@@ -117,7 +117,7 @@ class RepoViewModelTest : DescribeSpec({
             context("その他のエラーの場合") {
                 it("UnknownErrorのCanRetryエラーが設定される") {
                     runTest(testDispatcher.scheduler) {
-                        val viewModel = RepoViewModel(
+                        val viewModel = SearchViewModel(
                             FakeGitHubRepository(Result.failure(Exception("予期しないエラー")))
                         )
 
@@ -126,8 +126,8 @@ class RepoViewModelTest : DescribeSpec({
                             viewModel.fetchRepos("quesera2")
                             awaitItem() // ローディング中
                             val state = awaitItem()
-                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<RepoError>>()
-                            error.error shouldBe RepoError.UnknownError
+                            val error = state.errorMessage.shouldBeInstanceOf<ErrorMessage.CanRetry<SearchViewError>>()
+                            error.error shouldBe SearchViewError.UnknownError
                             state.isLoading shouldBe false
                             cancelAndIgnoreRemainingEvents()
                         }
@@ -140,7 +140,7 @@ class RepoViewModelTest : DescribeSpec({
     describe("onErrorDismissed") {
         it("エラーメッセージがクリアされる") {
             runTest(testDispatcher.scheduler) {
-                val viewModel = RepoViewModel(
+                val viewModel = SearchViewModel(
                     FakeGitHubRepository(Result.failure(Exception("エラー")))
                 )
 

@@ -27,11 +27,11 @@ class TrendViewModel(
                 throw e
             } catch (e: RepositoryException) {
                 state.update {
-                    it.failure(ErrorMessage.CanRetry(TrendError.NetworkError) { fetchTrending() })
+                    it.failure(ErrorMessage.CanRetry(TrendViewError.NetworkError) { fetchTrending() })
                 }
             } catch (e: Exception) {
                 state.update {
-                    it.failure(ErrorMessage.CanRetry(TrendError.UnknownError) { fetchTrending() })
+                    it.failure(ErrorMessage.CanRetry(TrendViewError.UnknownError) { fetchTrending() })
                 }
             }
         }
