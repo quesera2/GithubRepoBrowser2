@@ -36,7 +36,7 @@ class GitHubApiGraphQLImplTest : DescribeSpec({
 
         beforeEach {
             query = SearchReposFromUserQuery(
-                userName = "test",
+                userName = "testuser",
                 perPage = 30,
                 sort = RepositoryOrder(
                     direction = OrderDirection.DESC,

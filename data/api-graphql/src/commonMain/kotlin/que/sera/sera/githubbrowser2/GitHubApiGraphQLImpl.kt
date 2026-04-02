@@ -82,8 +82,6 @@ class GitHubApiGraphQLImpl(
         )
     }
 
-    // helper
-
     private fun SortOrder.toParam(): RepositoryOrder = when (this) {
         CREATED_AT -> RepositoryOrderField.CREATED_AT
         UPDATED_AT -> RepositoryOrderField.UPDATED_AT
