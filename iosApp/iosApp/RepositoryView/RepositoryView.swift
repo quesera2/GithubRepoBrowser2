@@ -235,7 +235,7 @@ private let sampleRepos: [GitHubRepo] = [
         RepositoryViewContent(
             state: SearchViewState.companion.initialState
                 .failure(errorMessage: ErrorMessageCancelOnly(
-                    error: SearchViewError.NetworkErrror.shared
+                    error: SearchViewError.NetworkError.shared
                 )),
             onSearch: { _ in },
             onDismissError: {}
