@@ -17,7 +17,7 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 |---|---|
 | 共通ロジック | [Kotlin Multiplatform](https://www.jetbrains.com/kotlin-multiplatform/) |
 | DI | [metro](https://zacsweers.github.io/metro/) |
-| 通信 | [Ktor](https://ktor.io/) |
+| 通信 | [Ktor](https://ktor.io/) / [Apollo Kotlin](https://www.apollographql.com/docs/kotlin) |
 | JSON | [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) |
 | 非同期 | [kotlinx.coroutines](https://github.com/Kotlin/kotlinx.coroutines) |
 | 多言語化 | [Moko Resources](https://github.com/icerockdev/moko-resources) |
@@ -34,10 +34,13 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 │   ├── model/           # データモデル
 │   └── contract/        # DIP のためインターフェースを定義
 ├── data/
-│   ├── api/             # API クライアント（Ktor）
+│   ├── api/             # API インターフェース・例外定義
+│   ├── api-ktor/        # API クライアント実装（Ktor / REST）
+│   ├── api-graphql/     # API クライアント実装（Apollo Kotlin / GraphQL）
 │   └── repository/      # リポジトリ実装
 ├── feature/
-│   └── search/          # ViewModel + UI 状態
+│   ├── search/          # ViewModel + UI 状態（ユーザー検索）
+│   └── trending/        # ViewModel + UI 状態（トレンド）
 ├── androidApp/          # Android アプリ（Jetpack Compose）
 └── iosApp/              # iOS アプリ（SwiftUI）
 ```
@@ -45,6 +48,16 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 ## モジュール依存関係
 
 <img src="docs/image/architecture.png" width="450" />
+
+## 事前準備
+
+GitHub の GraphQL API を使用するため、Personal Access Token が必要です。
+
+プロジェクトルートに `local.properties` を作成し、以下を追記してください。
+
+```properties
+github.token=ghp_xxxxxxxxxxxx
+```
 
 ## ビルド方法
 
