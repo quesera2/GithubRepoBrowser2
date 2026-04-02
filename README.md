@@ -47,7 +47,7 @@ Kotlin Multiplatform で構築し、iOS・Android それぞれネイティブ UI
 
 ## モジュール依存関係
 
-<img src="docs/image/architecture.png" width="450" />
+<img src="docs/image/architecture.jpg" width="450" />
 
 ## 事前準備
 
