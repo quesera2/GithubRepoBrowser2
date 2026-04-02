@@ -15,6 +15,7 @@ import que.sera.sera.githubbrowser2.SortOrder.UPDATED_AT
 import que.sera.sera.githubbrowser2.data.api.graphql.FetchTrendingReposQuery
 import que.sera.sera.githubbrowser2.data.api.graphql.FetchTrendingReposQuery.OnRepository
 import que.sera.sera.githubbrowser2.data.api.graphql.SearchReposFromUserQuery
+import que.sera.sera.githubbrowser2.data.api.graphql.fragment.RepositoryFields
 import que.sera.sera.githubbrowser2.data.api.graphql.type.OrderDirection
 import que.sera.sera.githubbrowser2.data.api.graphql.type.RepositoryOrder
 import que.sera.sera.githubbrowser2.data.api.graphql.type.RepositoryOrderField
@@ -50,6 +51,7 @@ class GitHubApiGraphQLImpl(
             avatarUrl = user.avatarUrl.toString()
         )
         val repositories = user.repositories.nodesFilterNotNull()
+            ?.map { it.repositoryFields }
             ?.map(::convertRepositoryNodeToModel)
             ?: emptyList()
         return githubUser to repositories
@@ -79,7 +81,7 @@ class GitHubApiGraphQLImpl(
         }
 
         val repositories = data.search.nodesFilterNotNull()
-            ?.mapNotNull { it.onRepository }
+            ?.mapNotNull { it.onRepository?.repositoryFields }
             ?.map(::convertRepositoryNodeToModel)
             ?: emptyList()
 
@@ -100,22 +102,7 @@ class GitHubApiGraphQLImpl(
     }
 
     private fun convertRepositoryNodeToModel(
-        node: SearchReposFromUserQuery.Node,
-    ) = with(node) {
-        GitHubRepo(
-            id = id,
-            name = name,
-            fullName = nameWithOwner,
-            description = description,
-            stars = stargazerCount,
-            forks = forkCount,
-            language = primaryLanguage?.name,
-            htmlUrl = url.toString()
-        )
-    }
-
-    private fun convertRepositoryNodeToModel(
-        node: OnRepository,
+        node: RepositoryFields,
     ) = with(node) {
         GitHubRepo(
             id = id,

@@ -7,16 +7,7 @@ query FetchTrendingRepos($query: String!, $perPage: Int!, $after: String) {
         }
         nodes {
             ... on Repository {
-                id
-                name
-                nameWithOwner
-                description
-                stargazerCount
-                forkCount
-                primaryLanguage {
-                    name
-                }
-                url
+                ...RepositoryFields
             }
         }
     }
