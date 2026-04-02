@@ -58,6 +58,7 @@ androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", vers
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }
+apollo-testing-support = { module = "com.apollographql.apollo:apollo-testing-support", version.ref = "apollo" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
