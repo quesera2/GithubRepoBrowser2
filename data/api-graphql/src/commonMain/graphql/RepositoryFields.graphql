@@ -1,0 +1,12 @@
+fragment RepositoryFields on Repository {
+    id
+    name
+    nameWithOwner
+    description
+    stargazerCount
+    forkCount
+    primaryLanguage {
+        name
+    }
+    url
+}

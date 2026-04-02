@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -6,6 +8,7 @@ plugins {
     alias(libs.plugins.metro)
     alias(libs.plugins.skie)
     alias(libs.plugins.mokoResources)
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -43,20 +46,33 @@ kotlin {
     }
 
     sourceSets {
-        commonMain.dependencies {
-            implementation(projects.feature.common)
-            implementation(projects.feature.resources)
-            implementation(projects.feature.search)
-            implementation(projects.feature.trending)
-            implementation(projects.data.repository)
-            implementation(projects.data.api)
-            implementation(projects.domain.contract)
-            implementation(projects.domain.model)
-            implementation(libs.metro.runtime)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
+        commonMain {
+            val localProperties = gradleLocalProperties(rootDir, providers)
+            val apiImpl = localProperties.getProperty("api.impl") ?: "rest"
+            kotlin.srcDir("src/commonMain-$apiImpl/kotlin")
+            dependencies {
+                implementation(projects.feature.common)
+                implementation(projects.feature.resources)
+                implementation(projects.feature.search)
+                implementation(projects.feature.trending)
+                implementation(projects.data.repository)
+                implementation(projects.data.api)
+
+                implementation(projects.domain.contract)
+                implementation(projects.domain.model)
+                implementation(libs.metro.runtime)
+
+                if (apiImpl == "graphql") {
+                    implementation(projects.data.apiGraphql)
+                    implementation(libs.apollo.runtime)
+                } else {
+                    implementation(projects.data.apiKtor)
+                    implementation(libs.kotlinx.serialization.json)
+                    implementation(libs.ktor.client.core)
+                    implementation(libs.ktor.client.content.negotiation)
+                    implementation(libs.ktor.serialization.kotlinx.json)
+                }
+            }
         }
         androidMain.dependencies {
             implementation(libs.metro.viewmodel)
@@ -70,5 +86,15 @@ kotlin {
             api(projects.domain.contract)
             api(libs.moko.resources)
         }
+    }
+}
+
+buildkonfig {
+    packageName = "que.sera.sera.githubbrowser2.shared"
+
+    defaultConfigs {
+        val token = gradleLocalProperties(rootDir, providers)
+            .getProperty("github.token") ?: ""
+        buildConfigField(FieldSpec.Type.STRING, "GITHUB_TOKEN", token)
     }
 }

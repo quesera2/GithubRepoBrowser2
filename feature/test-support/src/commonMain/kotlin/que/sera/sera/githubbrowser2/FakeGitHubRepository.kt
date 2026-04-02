@@ -4,8 +4,9 @@ class FakeGitHubRepository(
     private val result: Result<List<GitHubRepo>> = Result.success(emptyList()),
     private val userResult: Result<GitHubUser> = Result.success(FAKE_USER),
 ) : GitHubRepository {
-    override suspend fun fetchUser(username: String): GitHubUser = userResult.getOrThrow()
-    override suspend fun fetchRepos(username: String): List<GitHubRepo> = result.getOrThrow()
+    override suspend fun fetchUserAndRepos(username: String): Pair<GitHubUser, List<GitHubRepo>> =
+        userResult.getOrThrow() to result.getOrThrow()
+
     override suspend fun fetchTrendingRepos(): List<GitHubRepo> = result.getOrThrow()
 }
 

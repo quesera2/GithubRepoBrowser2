@@ -108,7 +108,7 @@ struct GitHubRepositoryCell: View {
 #Preview {
     let sampleRepos: [GitHubRepo] = [
         GitHubRepo(
-            id: 1,
+            id: "1",
             name: "swift-composable-architecture",
             fullName: "pointfreeco/swift-composable-architecture",
             description: "A library for building applications in a consistent and understandable way, with composition, testing, and ergonomics in mind",
@@ -118,7 +118,7 @@ struct GitHubRepositoryCell: View {
             htmlUrl: "https://github.com/pointfreeco/swift-composable-architecture"
         ),
         GitHubRepo(
-            id: 2,
+            id: "2",
             name: "dotfiles",
             fullName: "user/dotfiles",
             description: nil,
@@ -128,7 +128,7 @@ struct GitHubRepositoryCell: View {
             htmlUrl: "https://github.com/user/dotfiles"
         ),
         GitHubRepo(
-            id: 3,
+            id: "3",
             name: "my-project",
             fullName: "user/my-project",
             description: "A personal project",

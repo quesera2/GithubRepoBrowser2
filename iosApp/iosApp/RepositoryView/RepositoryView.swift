@@ -143,7 +143,7 @@ private let sampleUser = GitHubUser(
 
 private let sampleRepos: [GitHubRepo] = [
     GitHubRepo(
-        id: 1,
+        id: "1",
         name: "swift-composable-architecture",
         fullName: "pointfreeco/swift-composable-architecture",
         description: "A library for building applications in a consistent and understandable way",
@@ -153,7 +153,7 @@ private let sampleRepos: [GitHubRepo] = [
         htmlUrl: "https://github.com/pointfreeco/swift-composable-architecture"
     ),
     GitHubRepo(
-        id: 2,
+        id: "2",
         name: "Alamofire",
         fullName: "Alamofire/Alamofire",
         description: "Elegant HTTP Networking in Swift",
@@ -163,7 +163,7 @@ private let sampleRepos: [GitHubRepo] = [
         htmlUrl: "https://github.com/Alamofire/Alamofire"
     ),
     GitHubRepo(
-        id: 3,
+        id: "3",
         name: "dotfiles",
         fullName: "user/dotfiles",
         description: nil,

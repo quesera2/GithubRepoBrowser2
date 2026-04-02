@@ -19,4 +19,6 @@ plugins {
     alias(libs.plugins.skie) apply false
     alias(libs.plugins.metro) apply false
     alias(libs.plugins.mokoResources) apply false
+    alias(libs.plugins.buildkonfig) apply false
 }
+

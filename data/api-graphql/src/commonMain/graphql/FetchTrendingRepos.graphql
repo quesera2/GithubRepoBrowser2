@@ -1,0 +1,14 @@
+query FetchTrendingRepos($query: String!, $perPage: Int!, $after: String) {
+    search(query: $query, type: REPOSITORY, first: $perPage, after: $after) {
+        repositoryCount
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
+        nodes {
+            ... on Repository {
+                ...RepositoryFields
+            }
+        }
+    }
+}

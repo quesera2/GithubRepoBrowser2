@@ -139,7 +139,7 @@ class TrendViewModelTest : DescribeSpec({
 
 private val SAMPLE_REPOS = listOf(
     GitHubRepo(
-        id = 1,
+        id = "1",
         name = "kotlin",
         fullName = "JetBrains/kotlin",
         description = "The Kotlin Programming Language",

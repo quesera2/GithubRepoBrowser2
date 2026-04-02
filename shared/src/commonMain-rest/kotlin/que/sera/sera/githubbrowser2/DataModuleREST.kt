@@ -12,7 +12,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 @ContributesTo(AppScope::class)
-interface DataModule {
+interface DataModuleREST {
     @Provides
     @SingleIn(AppScope::class)
     fun provideJson(): Json = Json { ignoreUnknownKeys = true }
@@ -32,5 +32,5 @@ interface DataModule {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideGitHubApi(httpClient: HttpClient): GitHubApi = GitHubApi(httpClient)
+    fun provideGitHubApi(httpClient: HttpClient): GitHubApi = GitHubApiKtorImpl(httpClient)
 }

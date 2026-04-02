@@ -7,7 +7,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
-import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.http.ContentType
@@ -15,12 +14,11 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLProtocol
 import io.ktor.http.headersOf
-import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.io.IOException
 import kotlinx.serialization.json.Json
 
-class GitHubApiTest : DescribeSpec({
+class GitHubApiKtorImplTest : DescribeSpec({
     lateinit var testJson: Json
     lateinit var api: GitHubApi
 
@@ -28,7 +26,7 @@ class GitHubApiTest : DescribeSpec({
         testJson = Json { ignoreUnknownKeys = true }
     }
 
-    describe("fetchUser") {
+    describe("searchReposFromUser") {
         context("IOExceptionが発生したとき") {
             beforeEach {
                 api = setupApi(
@@ -37,9 +35,9 @@ class GitHubApiTest : DescribeSpec({
                 )
             }
 
-            it("IOExceptionが伝播する") {
-                shouldThrow<IOException> {
-                    api.fetchUser("testuser")
+            it("GitHubApiExceptionにラップされる") {
+                shouldThrow<GitHubApiException> {
+                    api.searchReposFromUser("testuser")
                 }
             }
         }
@@ -48,22 +46,27 @@ class GitHubApiTest : DescribeSpec({
             beforeEach {
                 api = setupApi(
                     json = testJson,
-                    engine = MockEngine {
-                        respond(
-                            content = """{"name":"Test User","login":"testuser","avatar_url":"https://example.com/avatar.png"}""",
-                            status = HttpStatusCode.OK,
-                            headers = headersOf(
-                                HttpHeaders.ContentType,
-                                ContentType.Application.Json.toString()
-                            ),
-                        )
+                    engine = MockEngine { request ->
+                        when {
+                            request.url.encodedPath.endsWith("/repos") -> respond(
+                                content = """[{"id":1,"name":"repo1","full_name":"testuser/repo1","description":"desc","stargazers_count":10,"forks_count":2,"language":"Kotlin","html_url":"https://github.com/testuser/repo1","pushed_at":"2024-01-01T00:00:00Z"}]""",
+                                status = HttpStatusCode.OK,
+                                headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
+                            )
+                            else -> respond(
+                                content = """{"name":"Test User","login":"testuser","avatar_url":"https://example.com/avatar.png"}""",
+                                status = HttpStatusCode.OK,
+                                headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
+                            )
+                        }
                     }
                 )
             }
 
-            it("GitHubUserを返す") {
-                val user = api.fetchUser("testuser")
+            it("Pair<GitHubUser, List<GitHubRepo>>を返す") {
+                val (user, repos) = api.searchReposFromUser("testuser")
                 user.login shouldBe "testuser"
+                repos.first().name shouldBe "repo1"
             }
         }
 
@@ -71,22 +74,26 @@ class GitHubApiTest : DescribeSpec({
             beforeEach {
                 api = setupApi(
                     json = testJson,
-                    engine = MockEngine {
-                        respond(
-                            content = """{"message":"ok"}""",
-                            status = HttpStatusCode.OK,
-                            headers = headersOf(
-                                HttpHeaders.ContentType,
-                                ContentType.Application.Json.toString()
-                            ),
-                        )
+                    engine = MockEngine { request ->
+                        when {
+                            request.url.encodedPath.endsWith("/repos") -> respond(
+                                content = """[{"message":"ok"}]""",
+                                status = HttpStatusCode.OK,
+                                headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
+                            )
+                            else -> respond(
+                                content = """{"message":"ok"}""",
+                                status = HttpStatusCode.OK,
+                                headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
+                            )
+                        }
                     }
                 )
             }
 
-            it("JsonConvertExceptionが伝播する") {
-                shouldThrow<JsonConvertException> {
-                    api.fetchUser("testuser")
+            it("GitHubApiExceptionにラップされる") {
+                shouldThrow<GitHubApiException> {
+                    api.searchReposFromUser("testuser")
                 }
             }
         }
@@ -99,18 +106,15 @@ class GitHubApiTest : DescribeSpec({
                         respond(
                             content = """{"message":"Not Found","documentation_url":"https://docs.github.com/rest"}""",
                             status = HttpStatusCode.NotFound,
-                            headers = headersOf(
-                                HttpHeaders.ContentType,
-                                ContentType.Application.Json.toString()
-                            ),
+                            headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
                         )
                     }
                 )
             }
 
-            it("ResponseExceptionが伝播する") {
-                shouldThrow<ResponseException> {
-                    api.fetchUser("testuser")
+            it("GitHubApiExceptionにラップされる") {
+                shouldThrow<GitHubApiException> {
+                    api.searchReposFromUser("testuser")
                 }
             }
         }
@@ -123,18 +127,15 @@ class GitHubApiTest : DescribeSpec({
                         respond(
                             content = """{"message":"Internal Server Error"}""",
                             status = HttpStatusCode.InternalServerError,
-                            headers = headersOf(
-                                HttpHeaders.ContentType,
-                                ContentType.Application.Json.toString()
-                            ),
+                            headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
                         )
                     }
                 )
             }
 
-            it("ResponseExceptionが伝播する") {
-                shouldThrow<ResponseException> {
-                    api.fetchUser("testuser")
+            it("GitHubApiExceptionにラップされる") {
+                shouldThrow<GitHubApiException> {
+                    api.searchReposFromUser("testuser")
                 }
             }
         }
@@ -145,7 +146,7 @@ class GitHubApiTest : DescribeSpec({
         private fun setupApi(
             json: Json,
             engine: HttpClientEngine,
-        ) = GitHubApi(
+        ) = GitHubApiKtorImpl(
             httpClient = HttpClient(engine) {
                 expectSuccess = true
                 install(ContentNegotiation) { json(json) }

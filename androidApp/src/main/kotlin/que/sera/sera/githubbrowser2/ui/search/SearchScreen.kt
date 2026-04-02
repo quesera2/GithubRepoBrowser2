@@ -331,7 +331,7 @@ private val sampleUser = GitHubUser(
 
 private val sampleRepos = listOf(
     GitHubRepo(
-        id = 1,
+        id = "1",
         name = "kotlin",
         fullName = "JetBrains/kotlin",
         description = "The Kotlin Programming Language",
@@ -341,7 +341,7 @@ private val sampleRepos = listOf(
         htmlUrl = ""
     ),
     GitHubRepo(
-        id = 2,
+        id = "2",
         name = "compose",
         fullName = "JetBrains/compose",
         description = "Compose Multiplatform",
@@ -351,7 +351,7 @@ private val sampleRepos = listOf(
         htmlUrl = ""
     ),
     GitHubRepo(
-        id = 3,
+        id = "3",
         name = "ktor",
         fullName = "ktorio/ktor",
         description = null,

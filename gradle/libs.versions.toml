@@ -19,6 +19,8 @@ metro = "0.12.1"
 mokoResources = "0.26.1"
 androidx-navigation3 = "1.0.1"
 coil = "3.4.0"
+apollo = "4.4.2"
+buildkonfig = "0.17.1"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
@@ -55,6 +57,8 @@ androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runt
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "androidx-navigation3" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }
+apollo-testing-support = { module = "com.apollographql.apollo:apollo-testing-support", version.ref = "apollo" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -67,3 +71,5 @@ kotest = { id = "io.kotest", version.ref = "kotest" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 mokoResources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "mokoResources" }
+apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }

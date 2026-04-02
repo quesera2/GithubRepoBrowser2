@@ -30,8 +30,6 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.ktor.client.mock)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.kotest.framework.engine)
             implementation(libs.kotest.assertions.core)
         }

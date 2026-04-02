@@ -173,17 +173,17 @@ private class TrendViewStateProvider : PreviewParameterProvider<TrendViewState> 
 
 private val sampleRepos = listOf(
     GitHubRepo(
-        id = 1, name = "kotlin", fullName = "JetBrains/kotlin",
+        id = "1", name = "kotlin", fullName = "JetBrains/kotlin",
         description = "The Kotlin Programming Language", stars = 50000, forks = 6000,
         language = "Kotlin", htmlUrl = ""
     ),
     GitHubRepo(
-        id = 2, name = "swift", fullName = "apple/swift",
+        id = "2", name = "swift", fullName = "apple/swift",
         description = "The Swift Programming Language", stars = 67000, forks = 10000,
         language = "C++", htmlUrl = ""
     ),
     GitHubRepo(
-        id = 3, name = "linux", fullName = "torvalds/linux",
+        id = "3", name = "linux", fullName = "torvalds/linux",
         description = null, stars = 180000, forks = 55000,
         language = "C", htmlUrl = ""
     ),
